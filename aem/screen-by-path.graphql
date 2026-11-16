@@ -1,0 +1,112 @@
+# WKND Bank: persisted as wknd-bank/screen-by-path
+#   GET /graphql/execute.json/wknd-bank/screen-by-path;path=/content/dam/wknd-bank/site/en/home/home
+# Generated from the demo spec. Every fragment returns _path, _variation and _model: the app builds
+# Universal Editor URNs from _path/_variation and picks the React component from _model.title.
+
+query screenByPath($path: String!, $variation: String = "master") {
+  screenByPath(_path: $path, variation: $variation) {
+    item {
+      _path _variation _model { title _path }
+      title
+      block {
+        ... on BankHeroModel {
+          _path _variation _model { title _path }
+          headline
+          subHeadline
+          primaryCtaText
+          primaryCtaLink
+          secondaryCtaText
+          secondaryCtaLink
+          ratesTitle
+          layout
+          rates {
+            ... on RateModel {
+              _path _variation _model { title _path }
+              product
+              detail
+              rate
+              rateType
+              term
+              effectiveDate
+              status
+              disclosure {
+                ... on DisclosureModel {
+                  _path _variation _model { title _path }
+                  title
+                  body { html plaintext }
+                }
+              }
+              ctaText
+              ctaLink
+            }
+          }
+        }
+        ... on RatesTableModel {
+          _path _variation _model { title _path }
+          title
+          linkText
+          linkUrl
+          rates {
+            ... on RateModel {
+              _path _variation _model { title _path }
+              product
+              detail
+              rate
+              rateType
+              term
+              effectiveDate
+              status
+              disclosure {
+                ... on DisclosureModel {
+                  _path _variation _model { title _path }
+                  title
+                  body { html plaintext }
+                }
+              }
+              ctaText
+              ctaLink
+            }
+          }
+        }
+        ... on ProductListModel {
+          _path _variation _model { title _path }
+          title
+          anchor
+          items {
+            ... on ProductLineModel {
+              _path _variation _model { title _path }
+              name
+              summary
+              ctaText
+              ctaLink
+            }
+          }
+        }
+        ... on FeatureSplitModel {
+          _path _variation _model { title _path }
+          headline
+          body { html plaintext }
+          image { ... on ImageRef { _path _authorUrl _publishUrl } }
+          imageAlt
+          mediaPosition
+          mobileOrder
+          background
+        }
+        ... on CtaBandModel {
+          _path _variation _model { title _path }
+          headline
+          ctaText
+          ctaLink
+          tone
+        }
+      }
+      disclosures {
+        ... on DisclosureModel {
+          _path _variation _model { title _path }
+          title
+          body { html plaintext }
+        }
+      }
+    }
+  }
+}

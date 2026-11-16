@@ -1,0 +1,36 @@
+[
+  {
+    "id": "screen-block",
+    "components": [
+      "bank-hero",
+      "rates-table",
+      "product-list",
+      "feature-split",
+      "cta-band"
+    ]
+  },
+  {
+    "id": "screen-disclosures",
+    "components": [
+      "disclosure"
+    ]
+  },
+  {
+    "id": "bank-hero-rates",
+    "components": [
+      "rate"
+    ]
+  },
+  {
+    "id": "rates-table-rates",
+    "components": [
+      "rate"
+    ]
+  },
+  {
+    "id": "product-list-items",
+    "components": [
+      "product-line"
+    ]
+  }
+]

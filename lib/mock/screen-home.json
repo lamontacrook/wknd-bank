@@ -1,0 +1,324 @@
+{
+  "_comment": "Generated from the demo spec: the exact shape of wknd-bank/screen-by-path. Used when AEM is not connected.",
+  "_path": "/content/dam/wknd-bank/site/en/home/home",
+  "_variation": "master",
+  "_model": {
+    "title": "Screen",
+    "_path": "/conf/wknd-bank/settings/dam/cfm/models/screen"
+  },
+  "title": "WKND Bank — Home",
+  "block": [
+    {
+      "_path": "/content/dam/wknd-bank/site/en/home/hero",
+      "_variation": "master",
+      "_model": {
+        "title": "Bank Hero",
+        "_path": "/conf/wknd-bank/settings/dam/cfm/models/bank-hero"
+      },
+      "headline": "Banking that shows its work.",
+      "subHeadline": "Clear rates, plain fees, and people who answer. Open a WKND checking account in about ten minutes.",
+      "primaryCtaText": "Open an account",
+      "primaryCtaLink": "#open",
+      "secondaryCtaText": "Compare accounts",
+      "secondaryCtaLink": "#accounts",
+      "ratesTitle": "Rates at a glance",
+      "layout": "split",
+      "rates": [
+        {
+          "_path": "/content/dam/wknd-bank/site/en/rates/high-yield-savings",
+          "_variation": "master",
+          "_model": {
+            "title": "Rate",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/rate"
+          },
+          "product": "High-yield savings",
+          "detail": "No minimum balance",
+          "rate": 0,
+          "rateType": "APY",
+          "term": "Variable",
+          "effectiveDate": "2026-11-01",
+          "status": "sample",
+          "disclosure": {
+            "_path": "/content/dam/wknd-bank/site/en/disclosures/deposit-rates",
+            "_variation": "master",
+            "_model": {
+              "title": "Disclosure",
+              "_path": "/conf/wknd-bank/settings/dam/cfm/models/disclosure"
+            },
+            "title": "Deposit rate disclosure",
+            "body": {
+              "html": "<p>Placeholder: Member FDIC and deposit rate terms approved by compliance go here.</p>",
+              "plaintext": "Placeholder: Member FDIC and deposit rate terms approved by compliance go here."
+            }
+          },
+          "ctaText": "Open savings",
+          "ctaLink": "#savings"
+        },
+        {
+          "_path": "/content/dam/wknd-bank/site/en/rates/cd-12-month",
+          "_variation": "master",
+          "_model": {
+            "title": "Rate",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/rate"
+          },
+          "product": "12-month CD",
+          "detail": "Fixed for the term",
+          "rate": 0,
+          "rateType": "APY",
+          "term": "12 months",
+          "effectiveDate": "2026-11-01",
+          "status": "sample",
+          "disclosure": {
+            "_path": "/content/dam/wknd-bank/site/en/disclosures/deposit-rates",
+            "_variation": "master",
+            "_model": {
+              "title": "Disclosure",
+              "_path": "/conf/wknd-bank/settings/dam/cfm/models/disclosure"
+            },
+            "title": "Deposit rate disclosure",
+            "body": {
+              "html": "<p>Placeholder: Member FDIC and deposit rate terms approved by compliance go here.</p>",
+              "plaintext": "Placeholder: Member FDIC and deposit rate terms approved by compliance go here."
+            }
+          },
+          "ctaText": "Open a CD",
+          "ctaLink": "#cd"
+        }
+      ]
+    },
+    {
+      "_path": "/content/dam/wknd-bank/site/en/home/rates",
+      "_variation": "master",
+      "_model": {
+        "title": "Rates Table",
+        "_path": "/conf/wknd-bank/settings/dam/cfm/models/rates-table"
+      },
+      "title": "Today's rates",
+      "linkText": "Rate disclosures",
+      "linkUrl": "#disclosures",
+      "rates": [
+        {
+          "_path": "/content/dam/wknd-bank/site/en/rates/high-yield-savings",
+          "_variation": "master",
+          "_model": {
+            "title": "Rate",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/rate"
+          },
+          "product": "High-yield savings",
+          "detail": "No minimum balance",
+          "rate": 0,
+          "rateType": "APY",
+          "term": "Variable",
+          "effectiveDate": "2026-11-01",
+          "status": "sample",
+          "disclosure": {
+            "_path": "/content/dam/wknd-bank/site/en/disclosures/deposit-rates",
+            "_variation": "master",
+            "_model": {
+              "title": "Disclosure",
+              "_path": "/conf/wknd-bank/settings/dam/cfm/models/disclosure"
+            },
+            "title": "Deposit rate disclosure",
+            "body": {
+              "html": "<p>Placeholder: Member FDIC and deposit rate terms approved by compliance go here.</p>",
+              "plaintext": "Placeholder: Member FDIC and deposit rate terms approved by compliance go here."
+            }
+          },
+          "ctaText": "Open savings",
+          "ctaLink": "#savings"
+        },
+        {
+          "_path": "/content/dam/wknd-bank/site/en/rates/cd-12-month",
+          "_variation": "master",
+          "_model": {
+            "title": "Rate",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/rate"
+          },
+          "product": "12-month CD",
+          "detail": "Fixed for the term",
+          "rate": 0,
+          "rateType": "APY",
+          "term": "12 months",
+          "effectiveDate": "2026-11-01",
+          "status": "sample",
+          "disclosure": {
+            "_path": "/content/dam/wknd-bank/site/en/disclosures/deposit-rates",
+            "_variation": "master",
+            "_model": {
+              "title": "Disclosure",
+              "_path": "/conf/wknd-bank/settings/dam/cfm/models/disclosure"
+            },
+            "title": "Deposit rate disclosure",
+            "body": {
+              "html": "<p>Placeholder: Member FDIC and deposit rate terms approved by compliance go here.</p>",
+              "plaintext": "Placeholder: Member FDIC and deposit rate terms approved by compliance go here."
+            }
+          },
+          "ctaText": "Open a CD",
+          "ctaLink": "#cd"
+        },
+        {
+          "_path": "/content/dam/wknd-bank/site/en/rates/mortgage-30-fixed",
+          "_variation": "master",
+          "_model": {
+            "title": "Rate",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/rate"
+          },
+          "product": "30-year fixed mortgage",
+          "detail": "Fixed for the life of the loan",
+          "rate": 0,
+          "rateType": "APR",
+          "term": "30 years",
+          "effectiveDate": "2026-11-01",
+          "status": "sample",
+          "disclosure": {
+            "_path": "/content/dam/wknd-bank/site/en/disclosures/lending",
+            "_variation": "master",
+            "_model": {
+              "title": "Disclosure",
+              "_path": "/conf/wknd-bank/settings/dam/cfm/models/disclosure"
+            },
+            "title": "Lending disclosure",
+            "body": {
+              "html": "<p>Placeholder: Equal Housing Lender and loan APR terms approved by compliance go here.</p>",
+              "plaintext": "Placeholder: Equal Housing Lender and loan APR terms approved by compliance go here."
+            }
+          },
+          "ctaText": "Talk to a lender",
+          "ctaLink": "#mortgage"
+        }
+      ]
+    },
+    {
+      "_path": "/content/dam/wknd-bank/site/en/home/accounts",
+      "_variation": "master",
+      "_model": {
+        "title": "Product List",
+        "_path": "/conf/wknd-bank/settings/dam/cfm/models/product-list"
+      },
+      "title": "Accounts for how you actually live",
+      "anchor": "accounts",
+      "items": [
+        {
+          "_path": "/content/dam/wknd-bank/site/en/products/checking",
+          "_variation": "master",
+          "_model": {
+            "title": "Product Line",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/product-line"
+          },
+          "name": "Checking",
+          "summary": "No monthly fee when you set up direct deposit.",
+          "ctaText": "Explore checking",
+          "ctaLink": "#checking"
+        },
+        {
+          "_path": "/content/dam/wknd-bank/site/en/products/savings",
+          "_variation": "master",
+          "_model": {
+            "title": "Product Line",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/product-line"
+          },
+          "name": "Savings",
+          "summary": "Earn more on money you're not touching.",
+          "ctaText": "Explore savings",
+          "ctaLink": "#savings"
+        },
+        {
+          "_path": "/content/dam/wknd-bank/site/en/products/credit-cards",
+          "_variation": "master",
+          "_model": {
+            "title": "Product Line",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/product-line"
+          },
+          "name": "Credit cards",
+          "summary": "Cash back without the fine print.",
+          "ctaText": "Compare cards",
+          "ctaLink": "#cards"
+        },
+        {
+          "_path": "/content/dam/wknd-bank/site/en/products/home-loans",
+          "_variation": "master",
+          "_model": {
+            "title": "Product Line",
+            "_path": "/conf/wknd-bank/settings/dam/cfm/models/product-line"
+          },
+          "name": "Home loans",
+          "summary": "Talk to a lender, not a call tree.",
+          "ctaText": "Start a conversation",
+          "ctaLink": "#mortgage"
+        }
+      ]
+    },
+    {
+      "_path": "/content/dam/wknd-bank/site/en/home/app-feature",
+      "_variation": "master",
+      "_model": {
+        "title": "Feature Split",
+        "_path": "/conf/wknd-bank/settings/dam/cfm/models/feature-split"
+      },
+      "headline": "Know where every dollar went.",
+      "body": {
+        "html": "<p>Spending insights, instant alerts, and card lock live in one app. Freeze a lost card in a tap; unfreeze it when it turns up in the couch.</p>",
+        "plaintext": "Spending insights, instant alerts, and card lock live in one app. Freeze a lost card in a tap; unfreeze it when it turns up in the couch."
+      },
+      "image": null,
+      "imageAlt": null,
+      "mediaPosition": "right",
+      "mobileOrder": "text-first",
+      "background": "mist"
+    },
+    {
+      "_path": "/content/dam/wknd-bank/site/en/home/cta",
+      "_variation": "master",
+      "_model": {
+        "title": "Cta Band",
+        "_path": "/conf/wknd-bank/settings/dam/cfm/models/cta-band"
+      },
+      "headline": "Ready when you are.",
+      "ctaText": "Open an account",
+      "ctaLink": "#open",
+      "tone": "spruce"
+    }
+  ],
+  "disclosures": [
+    {
+      "_path": "/content/dam/wknd-bank/site/en/disclosures/demo-notice",
+      "_variation": "master",
+      "_model": {
+        "title": "Disclosure",
+        "_path": "/conf/wknd-bank/settings/dam/cfm/models/disclosure"
+      },
+      "title": "Demo notice",
+      "body": {
+        "html": "<p>WKND Bank is a fictional bank for demonstration purposes. Rates shown are sample values, not offers.</p>",
+        "plaintext": "WKND Bank is a fictional bank for demonstration purposes. Rates shown are sample values, not offers."
+      }
+    },
+    {
+      "_path": "/content/dam/wknd-bank/site/en/disclosures/deposit-rates",
+      "_variation": "master",
+      "_model": {
+        "title": "Disclosure",
+        "_path": "/conf/wknd-bank/settings/dam/cfm/models/disclosure"
+      },
+      "title": "Deposit rate disclosure",
+      "body": {
+        "html": "<p>Placeholder: Member FDIC and deposit rate terms approved by compliance go here.</p>",
+        "plaintext": "Placeholder: Member FDIC and deposit rate terms approved by compliance go here."
+      }
+    },
+    {
+      "_path": "/content/dam/wknd-bank/site/en/disclosures/lending",
+      "_variation": "master",
+      "_model": {
+        "title": "Disclosure",
+        "_path": "/conf/wknd-bank/settings/dam/cfm/models/disclosure"
+      },
+      "title": "Lending disclosure",
+      "body": {
+        "html": "<p>Placeholder: Equal Housing Lender and loan APR terms approved by compliance go here.</p>",
+        "plaintext": "Placeholder: Equal Housing Lender and loan APR terms approved by compliance go here."
+      }
+    }
+  ]
+}

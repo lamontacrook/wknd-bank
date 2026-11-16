@@ -20,18 +20,37 @@ When you build a page, match the prototype's sections, order, spacing and respon
 ## Commands
 
 ```sh
-npm run dev     # local dev server (Turbopack)
-npm run build   # production build; must pass before you commit
-npm run lint    # ESLint
+npm run dev          # local dev server (Turbopack)
+npm run build        # production build; must pass before you commit
+npm run lint         # ESLint
+npm run aem:gen      # regenerate the query, mock and UE JSON from aem/demo.spec.json
+npm run aem:check    # validate the spec; check the query against the schema and the mock
+npm run aem:persist  # persist the query on AEM (needs AEM_HOST and AEM_TOKEN in your shell)
 ```
 
 Use npm, not pnpm or yarn. Node 22+.
 
 ## Stack
 
-- Next.js 16, App Router, React 19, TypeScript, Tailwind CSS v4.
+- Next.js 16, App Router, React 19, TypeScript. `cacheComponents` is on: cache with `"use cache"` + `cacheLife()`, never route-level `revalidate`.
+- Styling: CSS Modules colocated with each component, tokens and base styles in `app/globals.css`. No Tailwind.
 - Imports use the `@/` alias for the repo root.
-- AEM headless: `@adobe/aem-headless-client-js` calling persisted queries. Add it when the data layer is built.
+- AEM headless: persisted queries are plain `GET` requests (`lib/aem.ts`), so there is no client library.
+
+## Files
+
+| Path | What |
+|---|---|
+| `aem/demo.spec.json` | **Source of truth** for CF models, folders and sample content. Edit this, then `npm run aem:gen` |
+| `aem/scripts/` | Generators and checks, copied from the `headless-demo` skill |
+| `aem/screen-by-path.graphql` | Generated persisted query |
+| `lib/mock/screen-home.json` | Generated mock with the exact query shape |
+| `public/component-{definition,models,filters}.json` | Generated UE registration |
+| `lib/aem.ts` | Query URL and fetch, shared by server and client |
+| `lib/load-screen.ts` | Server-only cached loader with mock fallback |
+| `lib/aue.ts` | `data-aue-*` helpers |
+| `components/ScreenView.tsx` | Client view; re-reads from author inside UE |
+| `components/ModelManager.tsx` | `_model.title` → component registry |
 
 ## AEM environment
 
@@ -44,13 +63,13 @@ Use npm, not pnpm or yarn. Node 22+.
 | Home page fragment | `/content/dam/wknd-bank/site/en/home/home` (model: Screen) |
 | Persisted query | `wknd-bank/screen-by-path` → `GET /graphql/execute.json/wknd-bank/screen-by-path;path=<fragment path>` |
 
-Configuration comes from env vars, never hard-coded secrets:
+Configuration comes from env vars. The public, non-secret defaults are committed in `.env`; override them in `.env.local` or the host's settings. Never commit tokens.
 
 - `NEXT_PUBLIC_AEM_HOST`: AEM origin for content requests.
-- `NEXT_PUBLIC_AEM_AUTHOR`: author origin for the UE connection.
+- `NEXT_PUBLIC_AEM_AUTHOR`: author origin for the UE connection. It's read at **build time**; without it the connection meta isn't rendered.
 - `NEXT_PUBLIC_AEM_PROJECT`: the configuration name, `wknd-bank`.
 
-When AEM isn't configured or a request fails, render the local mock (`lib/mock/screen-home.json`, same shape as the query result) so the demo always works.
+When AEM isn't configured or a request fails, render the local mock (`lib/mock/screen-home.json`, same shape as the query result) so the demo always works. A badge in the corner shows the source: "Sample content", "AEM connected" or "AEM author".
 
 ### Content model
 
@@ -69,23 +88,24 @@ A page is a **Screen** fragment: `title`, `block` (an ordered list of section fr
 
 Choose the component from `_model.title` through a single registry (`ModelManager`). Don't use `switch` statements scattered around the code. Every fragment in a query must return `_path`, `_variation` and `_model { title _path }`.
 
-To change a model, change it in AEM *and* update the persisted query, the mock and the UE definitions together. A field rename doesn't migrate existing fragment values.
+To change a model, edit `aem/demo.spec.json`, run `npm run aem:gen && npm run aem:check`, then change it in AEM and re-persist the query. A field rename doesn't migrate existing fragment values.
 
 ## Universal Editor rules
 
 - `app/layout.tsx` renders `<meta name="urn:adobe:aue:system:aemconnection" content="aem:<author>">`, the three `<script>` tags for `/component-definition.json`, `/component-models.json` and `/component-filters.json` (in `public/`), and loads `https://universal-editor-service.adobe.io/cors.js`.
-- Put the `data-aue-*` attributes in helpers in `lib/aue`, never inline. A CF resource is `urn:aemconnection:<_path>/jcr:content/data/<_variation>`.
+- Put the `data-aue-*` attributes in helpers in `lib/aue.ts`, never inline. A CF resource is `urn:aemconnection:<_path>/jcr:content/data/<_variation>`.
   - Each fragment-backed component root gets `data-aue-resource`, `data-aue-type="reference"` and `data-aue-label`.
   - Each editable field gets `data-aue-prop` and `data-aue-type` (`text`, `richtext`, `media`).
   - Multi-value fragment references get `data-aue-type="container"` and a `data-aue-filter`.
-- Leave out `data-aue-model` so the properties panel follows the CF model. Only set it when a UE model in `component-models.json` lists *every* field.
+- Set `data-aue-model` only for models listed in `component-models.json` (the ones with enumerations: Bank Hero, Rate, Feature Split, Cta Band). Leave it out elsewhere so the properties panel follows the CF model.
+- Site chrome (utility bar, header nav, footer link columns) is code, not content. The footer disclosures are the Screen's `disclosures` field, so they sit inside a wrapper carrying the Screen resource.
 - Never make a number, date or enumeration inline-editable (e.g. `rate`). Edit those in the properties panel so they keep their types.
 - UE loads the site in an iframe from author, so editable content must render client-side from author data with `credentials: "include"`. Don't cache author responses.
 
 ## Design rules
 
-- Tokens: harbor `#1d4a85`, harbor-deep `#102a4c`, ink `#0f1f36`, paper `#faf8f3`, mist `#ebf0f6`, brass `#e3b04b`, slate-muted `#4a5669`, hairline `#d5dde8`. Define them once as CSS variables or Tailwind theme values, and never use hex values ad hoc in components.
-- Type: Source Serif 4 for display (`--font-display`) and Hanken Grotesk for body (`--font-body`), both through `next/font/google`.
+- Tokens (CSS variables in `app/globals.css`): harbor `#1d4a85`, harbor-deep `#102a4c`, ink `#0f1f36`, paper `#faf8f3`, mist `#ebf0f6`, brass `#e3b04b`, slate-muted `#4a5669`, hairline `#d5dde8`. Define them once as CSS variables or Tailwind theme values, and never use hex values ad hoc in components.
+- Type: Source Serif 4 for display and Hanken Grotesk for body through `next/font/google`. Use `var(--font-display-stack)` and `var(--font-body-stack)`, which include fallbacks.
 - Contrast is WCAG AA at minimum; `DESIGN.md` lists the pairings that pass. Brass is always paired with ink text.
 - Responsive behavior lives in components and is driven by CF enumeration fields such as `layout` and `mobileOrder`, not by per-page overrides. Sections stack below 1024px.
 
@@ -98,7 +118,7 @@ To change a model, change it in AEM *and* update the persisted query, the mock a
 ## Working conventions
 
 - Server Components are the default. Add `"use client"` only for interactivity or for content that UE must edit (author data).
-- Keep components small, typed, and colocated with their CSS or Tailwind classes under `components/`.
+- Keep components small, typed, and colocated with their `.module.css` under `components/`.
 - Images go through `next/image`. Alt text comes from CF fields (`imageAlt`); an empty alt means the image is decorative.
 - Don't commit secrets, `.env*.local`, or author tokens.
 - Before you commit, `npm run lint` and `npm run build` must both pass.

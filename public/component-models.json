@@ -1,0 +1,296 @@
+[
+  {
+    "id": "bank-hero",
+    "fields": [
+      {
+        "component": "text",
+        "name": "headline",
+        "label": "Headline",
+        "valueType": "string",
+        "required": true,
+        "description": "One line; the promise of the page"
+      },
+      {
+        "component": "text",
+        "name": "subHeadline",
+        "label": "Sub-headline",
+        "valueType": "string",
+        "description": "One or two sentences under the headline"
+      },
+      {
+        "component": "text",
+        "name": "primaryCtaText",
+        "label": "Primary button text",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "primaryCtaLink",
+        "label": "Primary button link",
+        "valueType": "string",
+        "required": true,
+        "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+      },
+      {
+        "component": "text",
+        "name": "secondaryCtaText",
+        "label": "Secondary button text",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "secondaryCtaLink",
+        "label": "Secondary button link",
+        "valueType": "string",
+        "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+      },
+      {
+        "component": "text",
+        "name": "ratesTitle",
+        "label": "Rate ledger title",
+        "valueType": "string"
+      },
+      {
+        "component": "select",
+        "name": "layout",
+        "label": "Layout",
+        "valueType": "string",
+        "description": "Desktop layout. Below 1024px the hero always stacks",
+        "options": [
+          {
+            "name": "Split: copy beside the rate ledger",
+            "value": "split"
+          },
+          {
+            "name": "Stacked: one column",
+            "value": "stacked"
+          }
+        ],
+        "value": "split"
+      }
+    ]
+  },
+  {
+    "id": "rate",
+    "fields": [
+      {
+        "component": "text",
+        "name": "product",
+        "label": "Product",
+        "valueType": "string",
+        "required": true,
+        "description": "e.g. 12-month CD"
+      },
+      {
+        "component": "text",
+        "name": "detail",
+        "label": "Detail",
+        "valueType": "string",
+        "description": "Short qualifier, e.g. No minimum balance"
+      },
+      {
+        "component": "number",
+        "name": "rate",
+        "label": "Rate (%)",
+        "valueType": "number",
+        "required": true,
+        "description": "Percentage as a number, e.g. 4.25. Displayed with two decimals"
+      },
+      {
+        "component": "select",
+        "name": "rateType",
+        "label": "Rate type",
+        "valueType": "string",
+        "required": true,
+        "options": [
+          {
+            "name": "APY",
+            "value": "APY"
+          },
+          {
+            "name": "APR",
+            "value": "APR"
+          }
+        ],
+        "value": "APY"
+      },
+      {
+        "component": "text",
+        "name": "term",
+        "label": "Term",
+        "valueType": "string",
+        "description": "e.g. Variable, 12 months"
+      },
+      {
+        "component": "date-time",
+        "name": "effectiveDate",
+        "label": "Effective date",
+        "valueType": "date",
+        "required": true,
+        "description": "Date this rate took effect"
+      },
+      {
+        "component": "select",
+        "name": "status",
+        "label": "Status",
+        "valueType": "string",
+        "required": true,
+        "description": "Only approved rates display without the Sample rate label",
+        "options": [
+          {
+            "name": "Sample (shows a Sample rate label)",
+            "value": "sample"
+          },
+          {
+            "name": "Approved by compliance",
+            "value": "approved"
+          }
+        ],
+        "value": "sample"
+      },
+      {
+        "component": "text",
+        "name": "ctaText",
+        "label": "Link text",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "ctaLink",
+        "label": "Link",
+        "valueType": "string",
+        "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+      }
+    ]
+  },
+  {
+    "id": "feature-split",
+    "fields": [
+      {
+        "component": "text",
+        "name": "headline",
+        "label": "Headline",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "body",
+        "label": "Body",
+        "valueType": "string"
+      },
+      {
+        "component": "reference",
+        "name": "image",
+        "label": "Image",
+        "valueType": "string",
+        "description": "Optional. Without an image, the app illustration shows",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "name": "imageAlt",
+        "label": "Image alt text",
+        "valueType": "string",
+        "description": "Describe the image; leave empty when it is decorative"
+      },
+      {
+        "component": "select",
+        "name": "mediaPosition",
+        "label": "Media position (desktop)",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Right",
+            "value": "right"
+          },
+          {
+            "name": "Left",
+            "value": "left"
+          }
+        ],
+        "value": "right"
+      },
+      {
+        "component": "select",
+        "name": "mobileOrder",
+        "label": "Mobile order",
+        "valueType": "string",
+        "description": "What stacks first below 1024px",
+        "options": [
+          {
+            "name": "Text first",
+            "value": "text-first"
+          },
+          {
+            "name": "Media first",
+            "value": "media-first"
+          }
+        ],
+        "value": "text-first"
+      },
+      {
+        "component": "select",
+        "name": "background",
+        "label": "Background",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Mist",
+            "value": "mist"
+          },
+          {
+            "name": "Paper",
+            "value": "paper"
+          }
+        ],
+        "value": "mist"
+      }
+    ]
+  },
+  {
+    "id": "cta-band",
+    "fields": [
+      {
+        "component": "text",
+        "name": "headline",
+        "label": "Headline",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "ctaText",
+        "label": "Button text",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "ctaLink",
+        "label": "Button link",
+        "valueType": "string",
+        "required": true,
+        "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+      },
+      {
+        "component": "select",
+        "name": "tone",
+        "label": "Tone",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Spruce (brand green)",
+            "value": "spruce"
+          },
+          {
+            "name": "Ink (dark)",
+            "value": "ink"
+          }
+        ],
+        "value": "spruce"
+      }
+    ]
+  }
+]

@@ -1,0 +1,731 @@
+{
+  "$schema": "https://github.com/lamontacrook/wknd-bank/blob/main/aem/README.md",
+  "brand": "WKND Bank",
+  "vertical": "Banking",
+  "conf": "wknd-bank",
+  "locale": "en",
+  "root": {
+    "model": "screen",
+    "path": "home/home",
+    "queryName": "screen-by-path"
+  },
+  "folders": {
+    "home": {
+      "title": "Home",
+      "models": [
+        "screen",
+        "bank-hero",
+        "rates-table",
+        "product-list",
+        "feature-split",
+        "cta-band"
+      ]
+    },
+    "rates": {
+      "title": "Rates",
+      "models": [
+        "rate"
+      ]
+    },
+    "products": {
+      "title": "Products",
+      "models": [
+        "product-line"
+      ]
+    },
+    "disclosures": {
+      "title": "Disclosures",
+      "models": [
+        "disclosure"
+      ]
+    }
+  },
+  "models": [
+    {
+      "id": "screen",
+      "title": "Screen",
+      "description": "A page: an ordered list of blocks plus the disclosures shown in its footer",
+      "folder": "home",
+      "fields": [
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "text",
+          "required": true,
+          "maxLength": 120,
+          "description": "Page title (browser tab and search results)"
+        },
+        {
+          "name": "block",
+          "label": "Blocks",
+          "type": "fragments",
+          "models": [
+            "bank-hero",
+            "rates-table",
+            "product-list",
+            "feature-split",
+            "cta-band"
+          ],
+          "description": "Page sections, top to bottom"
+        },
+        {
+          "name": "disclosures",
+          "label": "Disclosures",
+          "type": "fragments",
+          "models": [
+            "disclosure"
+          ],
+          "description": "Legal text for this page's footer, in display order"
+        }
+      ]
+    },
+    {
+      "id": "bank-hero",
+      "title": "Bank Hero",
+      "description": "Opening section: headline, two calls to action and a short rate ledger",
+      "folder": "home",
+      "fields": [
+        {
+          "name": "headline",
+          "label": "Headline",
+          "type": "text",
+          "required": true,
+          "maxLength": 90,
+          "description": "One line; the promise of the page"
+        },
+        {
+          "name": "subHeadline",
+          "label": "Sub-headline",
+          "type": "text",
+          "maxLength": 240,
+          "description": "One or two sentences under the headline"
+        },
+        {
+          "name": "primaryCtaText",
+          "label": "Primary button text",
+          "type": "text",
+          "required": true,
+          "maxLength": 30
+        },
+        {
+          "name": "primaryCtaLink",
+          "label": "Primary button link",
+          "type": "text",
+          "required": true,
+          "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+        },
+        {
+          "name": "secondaryCtaText",
+          "label": "Secondary button text",
+          "type": "text",
+          "maxLength": 30
+        },
+        {
+          "name": "secondaryCtaLink",
+          "label": "Secondary button link",
+          "type": "text",
+          "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+        },
+        {
+          "name": "ratesTitle",
+          "label": "Rate ledger title",
+          "type": "text",
+          "maxLength": 60
+        },
+        {
+          "name": "layout",
+          "label": "Layout",
+          "type": "enum",
+          "options": [
+            [
+              "split",
+              "Split: copy beside the rate ledger"
+            ],
+            [
+              "stacked",
+              "Stacked: one column"
+            ]
+          ],
+          "default": "split",
+          "description": "Desktop layout. Below 1024px the hero always stacks"
+        },
+        {
+          "name": "rates",
+          "label": "Rates",
+          "type": "fragments",
+          "models": [
+            "rate"
+          ],
+          "description": "Up to three rates for the ledger"
+        }
+      ]
+    },
+    {
+      "id": "rates-table",
+      "title": "Rates Table",
+      "description": "A titled table of rates with a link to the rate disclosures",
+      "folder": "home",
+      "fields": [
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "text",
+          "required": true,
+          "maxLength": 60
+        },
+        {
+          "name": "linkText",
+          "label": "Link text",
+          "type": "text",
+          "maxLength": 40
+        },
+        {
+          "name": "linkUrl",
+          "label": "Link",
+          "type": "text",
+          "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+        },
+        {
+          "name": "rates",
+          "label": "Rates",
+          "type": "fragments",
+          "models": [
+            "rate"
+          ],
+          "description": "Table rows, top to bottom"
+        }
+      ]
+    },
+    {
+      "id": "rate",
+      "title": "Rate",
+      "description": "One published rate. Shared by every placement, so a change here updates the whole site",
+      "folder": "rates",
+      "fields": [
+        {
+          "name": "product",
+          "label": "Product",
+          "type": "text",
+          "required": true,
+          "maxLength": 60,
+          "description": "e.g. 12-month CD"
+        },
+        {
+          "name": "detail",
+          "label": "Detail",
+          "type": "text",
+          "maxLength": 80,
+          "description": "Short qualifier, e.g. No minimum balance"
+        },
+        {
+          "name": "rate",
+          "label": "Rate (%)",
+          "type": "number",
+          "required": true,
+          "min": 0,
+          "description": "Percentage as a number, e.g. 4.25. Displayed with two decimals"
+        },
+        {
+          "name": "rateType",
+          "label": "Rate type",
+          "type": "enum",
+          "required": true,
+          "options": [
+            [
+              "APY",
+              "APY"
+            ],
+            [
+              "APR",
+              "APR"
+            ]
+          ],
+          "default": "APY"
+        },
+        {
+          "name": "term",
+          "label": "Term",
+          "type": "text",
+          "maxLength": 40,
+          "description": "e.g. Variable, 12 months"
+        },
+        {
+          "name": "effectiveDate",
+          "label": "Effective date",
+          "type": "date",
+          "required": true,
+          "description": "Date this rate took effect"
+        },
+        {
+          "name": "status",
+          "label": "Status",
+          "type": "enum",
+          "required": true,
+          "options": [
+            [
+              "sample",
+              "Sample (shows a Sample rate label)"
+            ],
+            [
+              "approved",
+              "Approved by compliance"
+            ]
+          ],
+          "default": "sample",
+          "description": "Only approved rates display without the Sample rate label"
+        },
+        {
+          "name": "disclosure",
+          "label": "Disclosure",
+          "type": "fragment",
+          "models": [
+            "disclosure"
+          ],
+          "description": "The disclosure that governs this rate"
+        },
+        {
+          "name": "ctaText",
+          "label": "Link text",
+          "type": "text",
+          "maxLength": 30
+        },
+        {
+          "name": "ctaLink",
+          "label": "Link",
+          "type": "text",
+          "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+        }
+      ]
+    },
+    {
+      "id": "product-list",
+      "title": "Product List",
+      "description": "A titled grid of product lines",
+      "folder": "home",
+      "fields": [
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "text",
+          "required": true,
+          "maxLength": 80
+        },
+        {
+          "name": "anchor",
+          "label": "Anchor",
+          "type": "text",
+          "pattern": "^[a-z][a-z0-9-]{1,39}$",
+          "patternMessage": "Lower-case letters, numbers and dashes, starting with a letter",
+          "description": "Section id for #links, e.g. accounts"
+        },
+        {
+          "name": "items",
+          "label": "Products",
+          "type": "fragments",
+          "models": [
+            "product-line"
+          ],
+          "description": "Cards, in display order"
+        }
+      ]
+    },
+    {
+      "id": "product-line",
+      "title": "Product Line",
+      "description": "One product family card: name, one-line summary and a link",
+      "folder": "products",
+      "fields": [
+        {
+          "name": "name",
+          "label": "Name",
+          "type": "text",
+          "required": true,
+          "maxLength": 40
+        },
+        {
+          "name": "summary",
+          "label": "Summary",
+          "type": "text",
+          "maxLength": 160
+        },
+        {
+          "name": "ctaText",
+          "label": "Link text",
+          "type": "text",
+          "maxLength": 30
+        },
+        {
+          "name": "ctaLink",
+          "label": "Link",
+          "type": "text",
+          "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+        }
+      ]
+    },
+    {
+      "id": "feature-split",
+      "title": "Feature Split",
+      "description": "Copy beside media, with authored desktop side and mobile stacking order",
+      "folder": "home",
+      "fields": [
+        {
+          "name": "headline",
+          "label": "Headline",
+          "type": "text",
+          "required": true,
+          "maxLength": 90
+        },
+        {
+          "name": "body",
+          "label": "Body",
+          "type": "multiline"
+        },
+        {
+          "name": "image",
+          "label": "Image",
+          "type": "image",
+          "description": "Optional. Without an image, the app illustration shows"
+        },
+        {
+          "name": "imageAlt",
+          "label": "Image alt text",
+          "type": "text",
+          "maxLength": 150,
+          "description": "Describe the image; leave empty when it is decorative"
+        },
+        {
+          "name": "mediaPosition",
+          "label": "Media position (desktop)",
+          "type": "enum",
+          "options": [
+            [
+              "right",
+              "Right"
+            ],
+            [
+              "left",
+              "Left"
+            ]
+          ],
+          "default": "right"
+        },
+        {
+          "name": "mobileOrder",
+          "label": "Mobile order",
+          "type": "enum",
+          "options": [
+            [
+              "text-first",
+              "Text first"
+            ],
+            [
+              "media-first",
+              "Media first"
+            ]
+          ],
+          "default": "text-first",
+          "description": "What stacks first below 1024px"
+        },
+        {
+          "name": "background",
+          "label": "Background",
+          "type": "enum",
+          "options": [
+            [
+              "mist",
+              "Mist"
+            ],
+            [
+              "paper",
+              "Paper"
+            ]
+          ],
+          "default": "mist"
+        }
+      ]
+    },
+    {
+      "id": "cta-band",
+      "title": "Cta Band",
+      "description": "Closing call-to-action band",
+      "folder": "home",
+      "fields": [
+        {
+          "name": "headline",
+          "label": "Headline",
+          "type": "text",
+          "required": true,
+          "maxLength": 90
+        },
+        {
+          "name": "ctaText",
+          "label": "Button text",
+          "type": "text",
+          "required": true,
+          "maxLength": 30
+        },
+        {
+          "name": "ctaLink",
+          "label": "Button link",
+          "type": "text",
+          "required": true,
+          "description": "A path (/accounts/checking), full URL, or #anchor on the same page"
+        },
+        {
+          "name": "tone",
+          "label": "Tone",
+          "type": "enum",
+          "options": [
+            [
+              "spruce",
+              "Spruce (brand green)"
+            ],
+            [
+              "ink",
+              "Ink (dark)"
+            ]
+          ],
+          "default": "spruce"
+        }
+      ]
+    },
+    {
+      "id": "disclosure",
+      "title": "Disclosure",
+      "description": "Legal or regulatory text, owned by compliance and reused across pages and rates",
+      "folder": "disclosures",
+      "fields": [
+        {
+          "name": "title",
+          "label": "Title",
+          "type": "text",
+          "required": true,
+          "maxLength": 80,
+          "description": "Internal label, e.g. Deposit rate disclosure"
+        },
+        {
+          "name": "body",
+          "label": "Text",
+          "type": "multiline",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "content": [
+    {
+      "path": "home/home",
+      "model": "screen",
+      "title": "WKND Bank — Home",
+      "fields": {
+        "title": "WKND Bank — Home",
+        "block": [
+          "home/hero",
+          "home/rates",
+          "home/accounts",
+          "home/app-feature",
+          "home/cta"
+        ],
+        "disclosures": [
+          "disclosures/demo-notice",
+          "disclosures/deposit-rates",
+          "disclosures/lending"
+        ]
+      }
+    },
+    {
+      "path": "home/hero",
+      "model": "bank-hero",
+      "title": "Banking that shows its work.",
+      "fields": {
+        "headline": "Banking that shows its work.",
+        "subHeadline": "Clear rates, plain fees, and people who answer. Open a WKND checking account in about ten minutes.",
+        "primaryCtaText": "Open an account",
+        "primaryCtaLink": "#open",
+        "secondaryCtaText": "Compare accounts",
+        "secondaryCtaLink": "#accounts",
+        "ratesTitle": "Rates at a glance",
+        "layout": "split",
+        "rates": [
+          "rates/high-yield-savings",
+          "rates/cd-12-month"
+        ]
+      }
+    },
+    {
+      "path": "rates/high-yield-savings",
+      "model": "rate",
+      "title": "High-yield savings",
+      "fields": {
+        "product": "High-yield savings",
+        "detail": "No minimum balance",
+        "rate": 0,
+        "rateType": "APY",
+        "term": "Variable",
+        "effectiveDate": "2026-11-01",
+        "status": "sample",
+        "disclosure": "disclosures/deposit-rates",
+        "ctaText": "Open savings",
+        "ctaLink": "#savings"
+      }
+    },
+    {
+      "path": "rates/cd-12-month",
+      "model": "rate",
+      "title": "12-month CD",
+      "fields": {
+        "product": "12-month CD",
+        "detail": "Fixed for the term",
+        "rate": 0,
+        "rateType": "APY",
+        "term": "12 months",
+        "effectiveDate": "2026-11-01",
+        "status": "sample",
+        "disclosure": "disclosures/deposit-rates",
+        "ctaText": "Open a CD",
+        "ctaLink": "#cd"
+      }
+    },
+    {
+      "path": "home/rates",
+      "model": "rates-table",
+      "title": "Today's rates",
+      "fields": {
+        "title": "Today's rates",
+        "linkText": "Rate disclosures",
+        "linkUrl": "#disclosures",
+        "rates": [
+          "rates/high-yield-savings",
+          "rates/cd-12-month",
+          "rates/mortgage-30-fixed"
+        ]
+      }
+    },
+    {
+      "path": "rates/mortgage-30-fixed",
+      "model": "rate",
+      "title": "30-year fixed mortgage",
+      "fields": {
+        "product": "30-year fixed mortgage",
+        "detail": "Fixed for the life of the loan",
+        "rate": 0,
+        "rateType": "APR",
+        "term": "30 years",
+        "effectiveDate": "2026-11-01",
+        "status": "sample",
+        "disclosure": "disclosures/lending",
+        "ctaText": "Talk to a lender",
+        "ctaLink": "#mortgage"
+      }
+    },
+    {
+      "path": "home/accounts",
+      "model": "product-list",
+      "title": "Accounts for how you actually live",
+      "fields": {
+        "title": "Accounts for how you actually live",
+        "anchor": "accounts",
+        "items": [
+          "products/checking",
+          "products/savings",
+          "products/credit-cards",
+          "products/home-loans"
+        ]
+      }
+    },
+    {
+      "path": "products/checking",
+      "model": "product-line",
+      "title": "Checking",
+      "fields": {
+        "name": "Checking",
+        "summary": "No monthly fee when you set up direct deposit.",
+        "ctaText": "Explore checking",
+        "ctaLink": "#checking"
+      }
+    },
+    {
+      "path": "products/savings",
+      "model": "product-line",
+      "title": "Savings",
+      "fields": {
+        "name": "Savings",
+        "summary": "Earn more on money you're not touching.",
+        "ctaText": "Explore savings",
+        "ctaLink": "#savings"
+      }
+    },
+    {
+      "path": "products/credit-cards",
+      "model": "product-line",
+      "title": "Credit cards",
+      "fields": {
+        "name": "Credit cards",
+        "summary": "Cash back without the fine print.",
+        "ctaText": "Compare cards",
+        "ctaLink": "#cards"
+      }
+    },
+    {
+      "path": "products/home-loans",
+      "model": "product-line",
+      "title": "Home loans",
+      "fields": {
+        "name": "Home loans",
+        "summary": "Talk to a lender, not a call tree.",
+        "ctaText": "Start a conversation",
+        "ctaLink": "#mortgage"
+      }
+    },
+    {
+      "path": "home/app-feature",
+      "model": "feature-split",
+      "title": "Know where every dollar went.",
+      "fields": {
+        "headline": "Know where every dollar went.",
+        "body": "<p>Spending insights, instant alerts, and card lock live in one app. Freeze a lost card in a tap; unfreeze it when it turns up in the couch.</p>",
+        "mediaPosition": "right",
+        "mobileOrder": "text-first",
+        "background": "mist"
+      }
+    },
+    {
+      "path": "home/cta",
+      "model": "cta-band",
+      "title": "Ready when you are.",
+      "fields": {
+        "headline": "Ready when you are.",
+        "ctaText": "Open an account",
+        "ctaLink": "#open",
+        "tone": "spruce"
+      }
+    },
+    {
+      "path": "disclosures/demo-notice",
+      "model": "disclosure",
+      "title": "Demo notice",
+      "fields": {
+        "title": "Demo notice",
+        "body": "<p>WKND Bank is a fictional bank for demonstration purposes. Rates shown are sample values, not offers.</p>"
+      }
+    },
+    {
+      "path": "disclosures/deposit-rates",
+      "model": "disclosure",
+      "title": "Deposit rate disclosure",
+      "fields": {
+        "title": "Deposit rate disclosure",
+        "body": "<p>Placeholder: Member FDIC and deposit rate terms approved by compliance go here.</p>"
+      }
+    },
+    {
+      "path": "disclosures/lending",
+      "model": "disclosure",
+      "title": "Lending disclosure",
+      "fields": {
+        "title": "Lending disclosure",
+        "body": "<p>Placeholder: Equal Housing Lender and loan APR terms approved by compliance go here.</p>"
+      }
+    }
+  ]
+}

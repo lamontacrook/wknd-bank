@@ -1,0 +1,134 @@
+{
+  "groups": [
+    {
+      "title": "WKND Bank",
+      "id": "wknd-bank",
+      "components": [
+        {
+          "title": "Bank Hero",
+          "id": "bank-hero",
+          "plugins": {
+            "aem": {
+              "cf": {
+                "name": "bank-hero",
+                "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/bank-hero",
+                "title": "Bank Hero",
+                "description": "Opening section: headline, two calls to action and a short rate ledger",
+                "cfFolder": "/content/dam/wknd-bank/site/en/home"
+              }
+            }
+          },
+          "model": "bank-hero"
+        },
+        {
+          "title": "Rates Table",
+          "id": "rates-table",
+          "plugins": {
+            "aem": {
+              "cf": {
+                "name": "rates-table",
+                "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/rates-table",
+                "title": "Rates Table",
+                "description": "A titled table of rates with a link to the rate disclosures",
+                "cfFolder": "/content/dam/wknd-bank/site/en/home"
+              }
+            }
+          }
+        },
+        {
+          "title": "Rate",
+          "id": "rate",
+          "plugins": {
+            "aem": {
+              "cf": {
+                "name": "rate",
+                "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/rate",
+                "title": "Rate",
+                "description": "One published rate. Shared by every placement, so a change here updates the whole site",
+                "cfFolder": "/content/dam/wknd-bank/site/en/rates"
+              }
+            }
+          },
+          "model": "rate"
+        },
+        {
+          "title": "Product List",
+          "id": "product-list",
+          "plugins": {
+            "aem": {
+              "cf": {
+                "name": "product-list",
+                "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/product-list",
+                "title": "Product List",
+                "description": "A titled grid of product lines",
+                "cfFolder": "/content/dam/wknd-bank/site/en/home"
+              }
+            }
+          }
+        },
+        {
+          "title": "Product Line",
+          "id": "product-line",
+          "plugins": {
+            "aem": {
+              "cf": {
+                "name": "product-line",
+                "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/product-line",
+                "title": "Product Line",
+                "description": "One product family card: name, one-line summary and a link",
+                "cfFolder": "/content/dam/wknd-bank/site/en/products"
+              }
+            }
+          }
+        },
+        {
+          "title": "Feature Split",
+          "id": "feature-split",
+          "plugins": {
+            "aem": {
+              "cf": {
+                "name": "feature-split",
+                "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/feature-split",
+                "title": "Feature Split",
+                "description": "Copy beside media, with authored desktop side and mobile stacking order",
+                "cfFolder": "/content/dam/wknd-bank/site/en/home"
+              }
+            }
+          },
+          "model": "feature-split"
+        },
+        {
+          "title": "Cta Band",
+          "id": "cta-band",
+          "plugins": {
+            "aem": {
+              "cf": {
+                "name": "cta-band",
+                "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/cta-band",
+                "title": "Cta Band",
+                "description": "Closing call-to-action band",
+                "cfFolder": "/content/dam/wknd-bank/site/en/home"
+              }
+            }
+          },
+          "model": "cta-band"
+        },
+        {
+          "title": "Disclosure",
+          "id": "disclosure",
+          "plugins": {
+            "aem": {
+              "cf": {
+                "name": "disclosure",
+                "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/disclosure",
+                "title": "Disclosure",
+                "description": "Legal or regulatory text, owned by compliance and reused across pages and rates",
+                "cfFolder": "/content/dam/wknd-bank/site/en/disclosures"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

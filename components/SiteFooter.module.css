@@ -1,0 +1,18 @@
+.footer { background: var(--color-harbor-deep); color: var(--color-fog); padding: 56px 0 40px; font-size: var(--fs-small); }
+.cols {
+  display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 32px; padding-bottom: 40px;
+  border-bottom: 1px solid color-mix(in oklch, var(--color-paper) 14%, transparent);
+}
+.wordmark { font-family: var(--font-display-stack); font-size: 1.5rem; font-weight: 600; text-decoration: none; color: var(--color-paper); }
+.cols h2 { font: 600 1rem var(--font-body-stack); letter-spacing: 0; color: var(--color-paper); margin-bottom: 12px; }
+.cols ul { list-style: none; padding: 0; display: grid; gap: 8px; }
+.cols a { text-decoration: none; }
+.cols a:hover { color: var(--color-paper); }
+.legal { padding-top: 24px; display: grid; gap: 12px; font-size: 0.875rem; }
+
+@media (max-width: 1024px) {
+  .cols { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .cols { grid-template-columns: 1fr; }
+}
