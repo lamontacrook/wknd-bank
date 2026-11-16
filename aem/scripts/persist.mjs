@@ -1,19 +1,42 @@
 #!/usr/bin/env node
 // Persists the generated query on an AEM author and runs it against the root page.
 // The AEM MCP token can't reach /graphql/* (403, outside its scopes), so this uses a developer token.
-//   AEM_HOST=https://author-pXXXX-eYYYY.adobeaemcloud.com AEM_TOKEN=<token> node persist.mjs <spec> [query.graphql] [--no-publish]
-// AEM_TOKEN: author → Developer Console → Integrations → Local token (24h).
+//   node persist.mjs <spec> [query.graphql] [--no-publish]
+// AEM_HOST defaults to NEXT_PUBLIC_AEM_AUTHOR from .env. AEM_TOKEN is prompted for (hidden) when not set.
+// Token: Cloud Manager → environment … → Developer Console → Integrations → Local token → "accessToken" (24h).
 // Prerequisite: the configuration has "GraphQL Persistent Queries" ticked.
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
+import { createInterface } from "node:readline"
 import { isMain, loadSpec } from "./lib.mjs"
 import { query as generate } from "./query.mjs"
 
+const fromDotEnv = (key) =>
+  existsSync(".env") ? readFileSync(".env", "utf8").match(new RegExp(`^${key}=(\\S+)`, "m"))?.[1] : undefined
+
+function askHidden(question) {
+  if (!process.stdin.isTTY) return Promise.resolve("")
+  const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true })
+  return new Promise((done) => {
+    rl.on("close", () => done(""))
+    rl.question(question, (answer) => {
+      done(answer.trim().replace(/^"|"$/g, ""))
+      process.stdout.write("\n")
+      rl.close()
+    })
+    rl._writeToOutput = (text) => { if (text.startsWith(question)) process.stdout.write(question) }
+  })
+}
+
 if (isMain(import.meta.url)) {
   const s = loadSpec()
-  const HOST = (process.env.AEM_HOST || "").replace(/\/$/, "")
-  const TOKEN = process.env.AEM_TOKEN
-  if (!HOST || !TOKEN) {
-    console.error("Set AEM_HOST and AEM_TOKEN (Developer Console → Integrations → Local token).")
+  const HOST = (process.env.AEM_HOST || fromDotEnv("NEXT_PUBLIC_AEM_AUTHOR") || "").replace(/\/$/, "")
+  if (!HOST) {
+    console.error("Set AEM_HOST to the author origin, e.g. https://author-pXXXX-eYYYY.adobeaemcloud.com")
+    process.exit(1)
+  }
+  const TOKEN = process.env.AEM_TOKEN || (await askHidden(`AEM token for ${HOST} (input hidden, paste and press Enter): `))
+  if (!TOKEN) {
+    console.error("No token. Developer Console → Integrations → Local token → copy \"accessToken\".")
     process.exit(1)
   }
   const name = s.root.queryName || "page-by-path"
