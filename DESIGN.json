@@ -1,0 +1,32 @@
+{
+  "_provenance": {"writtenBy": "stardust:direct", "mode": "rebrand", "read": ["PRODUCT.md", "stardust/current/_brand-extraction.json"]},
+  "schemaVersion": 2,
+  "extensions": {
+    "colorMeta": {"ink": {"oklch": "oklch(0.26 0.03 200)"}, "spruce": {"oklch": "oklch(0.40 0.07 182)"}, "spruce-deep": {"oklch": "oklch(0.31 0.05 184)"}, "paper": {"oklch": "oklch(0.98 0.007 85)"}, "mist": {"oklch": "oklch(0.95 0.01 160)"}, "brass": {"oklch": "oklch(0.78 0.13 80)"}, "contrastAudit": {"ink/paper": 14.54, "slate-muted/paper": 6.58, "paper/spruce": 8.85, "ink/brass": 7.78, "brass/spruce-deep": 6.49, "lichen/spruce-deep": 7.75}},
+    "typographyMeta": {"numerals": "tabular-nums on figures", "source": "Google Fonts (Source Serif 4, Hanken Grotesk)"},
+    "shadows": {"card-hover": "0 8px 24px oklch(0.25 0.03 190 / 0.08)"},
+    "motion": {"register": null, "registerRationale": "Static by default; calm-over-urgent principle. Hover/focus transitions 150ms ease-out only."},
+    "breakpoints": {"sm": 640, "md": 768, "lg": 1024, "xl": 1280, "containerMaxWidth": 1200},
+    "divergence": {
+      "mode": "rebrand",
+      "modeReason": "user asked for a new look and feel for a bank; captured signal-thin (chrome only, content gated)",
+      "seed": {"decade": {"value": "2025-now", "picked_by": "reasoned: contemporary retail banking (Monzo, Starling, Chase refresh)"}, "craft": {"value": "statement print / financial typesetting", "picked_by": "reasoned: 'lead with the number'"}, "register": {"value": "civic-trust", "picked_by": "reasoned: regulated retail bank"}, "ground_family": {"value": "warm paper", "picked_by": "reasoned: counter institutional cold-blue default", "override": "direction-driven"}},
+      "font_deck": {"name": "custom: serif-figure + grotesk", "picked_by": "reasoned", "faces": ["Source Serif 4", "Hanken Grotesk"]},
+      "divergence_justifications": ["Out-of-deck pairing: Source Serif 4 gives statement-style figures; Hanken Grotesk is the toolkit's listed substitute for reflex Inter/IBM Plex Sans. Neither is on the reflex-reject list."],
+      "palette_source": "derived: spruce (trust/growth) instead of category-default navy; brass accent; WCAG AA verified",
+      "references_used": [{"anchor": "category conventions of UK/US retail banks", "basis": "agent knowledge; no live research run"}],
+      "antiToolboxAudit": ["Rejected navy+gold cliché → spruce+brass", "Rejected gradient hero → flat spruce-deep band with photo", "No glassmorphism, no gradient text, no side stripes"]
+    },
+    "componentStyle": {"buttons": "pill 48px, grotesk 600", "cards": "paper, hairline, 12px radius", "inputs": "48px hairline", "dualCTAPattern": "primary + secondary text link; never two filled buttons"},
+    "systemComponentRoles": {"utility-bar": {"purpose": "segment switch + locale + help", "position": "top, spruce-deep"}, "header": {"purpose": "brand + primary IA + sign-in + open-account", "position": "sticky top"}, "footer": {"purpose": "IA links, regulatory disclosure, FDIC-style membership line", "position": "bottom, spruce-deep"}, "disclosure": {"purpose": "authorable legal text attached to any rate", "position": "inline under rate or section foot"}},
+    "voice": {"dos": ["Say the number first: '4.10% APY on savings.'", "Plain verbs: Open, Compare, Talk to us."], "donts": ["'Unlock your financial potential'", "'Hurry — limited time'"]},
+    "iaPriorities": [{"signal": "commercial-conversion", "evidence": "category: retail bank — Open an account is the primary conversion", "preserveAs": "first-viewport", "scope": "site-wide", "mutability": "movable"}, {"signal": "audience-routing", "evidence": "Personal / Business segmentation", "preserveAs": "utility-bar", "scope": "site-wide", "mutability": "movable"}]
+  },
+  "narrative": {
+    "northStar": "A well-set bank statement you'd actually want to read.",
+    "keyCharacteristics": ["serif figures", "warm paper ground", "single brass decision per section", "spruce trust bands"],
+    "rules": ["The One Brass Rule", "The Number Leads Rule", "The No Grey Fine-Print Rule"],
+    "dos": ["Lead with rates", "One action per section"],
+    "donts": ["pure black/white", "urgency copy", "gradient text"]
+  }
+}
