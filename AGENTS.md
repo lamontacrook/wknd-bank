@@ -64,7 +64,7 @@ A page is a **Screen** fragment: `title`, `block` (an ordered list of section fr
 | Rate | `RateFigure` and table rows | `rate` is a number, `rateType` is APY or APR, `status` is sample or approved |
 | Product List / Product Line | `ProductList` | `items` references Product Line |
 | Feature Split | `FeatureSplit` | `mediaPosition`, `mobileOrder` and `background` drive responsive layout |
-| Cta Band | `CtaBand` | `tone`: `spruce` or `ink` |
+| Cta Band | `CtaBand` | `tone`: `spruce` or `ink`. `spruce` is a legacy enum key in AEM; it renders the primary brand color, harbor |
 | Disclosure | Footer | Rich text owned by compliance |
 
 Choose the component from `_model.title` through a single registry (`ModelManager`). Don't use `switch` statements scattered around the code. Every fragment in a query must return `_path`, `_variation` and `_model { title _path }`.
@@ -84,7 +84,7 @@ To change a model, change it in AEM *and* update the persisted query, the mock a
 
 ## Design rules
 
-- Tokens: spruce `#0e4f4a`, spruce-deep `#0a3835`, ink `#10282b`, paper `#faf8f3`, mist `#edf2ef`, brass `#e3b04b`, slate-muted `#4a5d5b`, hairline `#d6dfdb`. Define them once as CSS variables or Tailwind theme values, and never use hex values ad hoc in components.
+- Tokens: harbor `#1d4a85`, harbor-deep `#102a4c`, ink `#0f1f36`, paper `#faf8f3`, mist `#ebf0f6`, brass `#e3b04b`, slate-muted `#4a5669`, hairline `#d5dde8`. Define them once as CSS variables or Tailwind theme values, and never use hex values ad hoc in components.
 - Type: Source Serif 4 for display (`--font-display`) and Hanken Grotesk for body (`--font-body`), both through `next/font/google`.
 - Contrast is WCAG AA at minimum; `DESIGN.md` lists the pairings that pass. Brass is always paired with ink text.
 - Responsive behavior lives in components and is driven by CF enumeration fields such as `layout` and `mobileOrder`, not by per-page overrides. Sections stack below 1024px.

@@ -1,6 +1,9 @@
 <!-- stardust:provenance writtenBy=stardust:direct at=2026-11-13T15:50:00Z -->
 # Direction — WKND Bank
 
+> **Palette revision (2026-11-16):** at the client's request, the primary color moved from spruce green to harbor navy (`#1d4a85`, deep `#102a4c`). The green-tinted neutrals were cooled to match. `DESIGN.md` has the current tokens; the green references below are historical.
+
+
 ## Phrase
 "create a new look and feel for this site … this will be for a bank" + user choice: "Fictional retail bank, trustworthy-modern (e.g. "WKND Bank")".
 

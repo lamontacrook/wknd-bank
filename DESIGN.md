@@ -1,16 +1,16 @@
 ---
 name: WKND Bank
-description: Trustworthy-modern retail bank — spruce, paper and brass
+description: Trustworthy-modern retail bank — harbor navy, paper and brass
 colors:
-  ink: "#10282b"
-  spruce: "#0e4f4a"
-  spruce-deep: "#0a3835"
+  ink: "#0f1f36"
+  harbor: "#1d4a85"
+  harbor-deep: "#102a4c"
   paper: "#faf8f3"
-  mist: "#edf2ef"
+  mist: "#ebf0f6"
   brass: "#e3b04b"
-  slate-muted: "#4a5d5b"
-  hairline: "#d6dfdb"
-  lichen-on-dark: "#b9cdc8"
+  slate-muted: "#4a5669"
+  hairline: "#d5dde8"
+  fog-on-dark: "#b8c8de"
 typography:
   display:
     fontFamily: "'Source Serif 4', Georgia, serif"
@@ -59,13 +59,13 @@ spacing:
   section-mobile: "32px"
 components:
   button-primary:
-    backgroundColor: "{colors.spruce}"
+    backgroundColor: "{colors.harbor}"
     textColor: "{colors.paper}"
     rounded: "{rounded.pill}"
     padding: "14px 28px"
     height: "48px"
   button-primary-hover:
-    backgroundColor: "{colors.spruce-deep}"
+    backgroundColor: "{colors.harbor-deep}"
   button-accent:
     backgroundColor: "{colors.brass}"
     textColor: "{colors.ink}"
@@ -73,7 +73,7 @@ components:
     padding: "14px 28px"
   button-secondary:
     backgroundColor: "{colors.paper}"
-    textColor: "{colors.spruce}"
+    textColor: "{colors.harbor}"
     rounded: "{rounded.pill}"
     padding: "13px 27px"
   card:
@@ -88,7 +88,7 @@ components:
     height: "48px"
   badge:
     backgroundColor: "{colors.mist}"
-    textColor: "{colors.spruce}"
+    textColor: "{colors.harbor}"
     typography: "{typography.label}"
     rounded: "{rounded.pill}"
 ---
@@ -96,15 +96,15 @@ components:
 # Design System: WKND Bank
 
 ## Overview
-A calm, paper-toned bank that reads like a well-set statement: serif figures for the numbers that matter, a sturdy grotesk for everything you act on, and a single brass accent reserved for the one action per section. Spruce green carries trust; the warm paper ground keeps it from feeling institutional.
+A calm, paper-toned bank that reads like a well-set statement: serif figures for the numbers that matter, a sturdy grotesk for everything you act on, and a single brass accent reserved for the one action per section. Harbor navy carries trust; the warm paper ground keeps it from feeling institutional.
 
 ## Colors
 ### Primary
-**Spruce** (#0e4f4a): primary buttons, links, brand bands. **Spruce deep** (#0a3835): hero and footer grounds, hover state.
+**Harbor** (#1d4a85): primary buttons, links, brand bands. **Harbor deep** (#102a4c): hero and footer grounds, hover state.
 ### Secondary
-**Brass** (#e3b04b): accent CTA on dark grounds and the rate highlight. Always paired with ink text (7.8:1).
+**Brass** (#e3b04b): accent CTA on dark grounds and the rate highlight. Always paired with ink text (8.3:1).
 ### Neutral
-**Paper** (#faf8f3) page ground; **Mist** (#edf2ef) alternate section surface; **Ink** (#10282b) body text (14.5:1 on paper); **Slate muted** (#4a5d5b) secondary text (6.6:1); **Hairline** (#d6dfdb) borders; **Lichen** (#b9cdc8) secondary text on spruce-deep (7.8:1).
+**Paper** (#faf8f3) page ground; **Mist** (#ebf0f6) alternate section surface; **Ink** (#0f1f36) body text (15.6:1 on paper); **Slate muted** (#4a5669) secondary text (7.0:1); **Hairline** (#d5dde8) borders; **Fog** (#b8c8de) secondary text on harbor-deep (8.5:1).
 ### Named Rules
 **The One Brass Rule.** At most one brass element per section — it marks the decision.
 **The No Grey Fine-Print Rule.** Disclosures use slate-muted at ≥14px, never lighter.
@@ -127,13 +127,13 @@ Pill buttons and badges; 12px card radius; 6px inputs. Photography cropped to 4:
 
 ## Components
 ### Buttons
-Pill, 48px tall, grotesk 600. Primary spruce on paper; accent brass on spruce-deep; secondary outlined spruce. Focus: 3px brass ring offset 2px.
+Pill, 48px tall, grotesk 600. Primary harbor on paper; accent brass on harbor-deep; secondary outlined harbor. Focus: 3px brass ring offset 2px.
 ### Cards / Containers
 Paper card, hairline border, 24px padding, title + body + text link.
 ### Inputs / Fields
-48px, hairline border, spruce 2px border on focus.
+48px, hairline border, harbor 2px border on focus.
 ### Navigation
-Utility bar (Personal · Business · Wealth · Locations · Help) in spruce-deep, main nav on paper with wordmark, primary links, Sign in (secondary) and Open an account (primary).
+Utility bar (Personal · Business · Wealth · Locations · Help) in harbor-deep, main nav on paper with wordmark, primary links, Sign in (secondary) and Open an account (primary).
 ### Rate tile (signature)
 Label (uppercase), serif figure with unit (e.g. “4.10% APY”), one-line qualifier, disclosure link.
 
