@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 !.env.example
 !.env
+
+# local HTTPS certs (next dev --experimental-https)
+certificates

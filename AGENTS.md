@@ -21,6 +21,7 @@ When you build a page, match the prototype's sections, order, spacing and respon
 
 ```sh
 npm run dev          # local dev server (Turbopack)
+npm run dev:https    # same over HTTPS (Universal Editor needs it); certs in certificates/ (gitignored)
 npm run build        # production build; must pass before you commit
 npm run lint         # ESLint
 npm run aem:gen      # regenerate the query, mock and UE JSON from aem/demo.spec.json

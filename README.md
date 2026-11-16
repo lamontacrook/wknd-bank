@@ -5,6 +5,7 @@ A demo site for a fictional bank: Next.js 16 rendering AEM as a Cloud Service Co
 ```sh
 npm install
 npm run dev        # http://localhost:3000, renders sample content until AEM is connected
+npm run dev:https  # https://localhost:3000, needed to open the app in Universal Editor
 ```
 
 - The design came from a Stardust prototype: `stardust/prototypes/index-proposed.html`.
