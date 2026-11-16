@@ -1,0 +1,98 @@
+/* Demo overlay for Universal Editor data. Deliberately loud: it should read as an annotation, not as UI. */
+
+.root { display: contents; }
+
+.root [data-kind="fragment"] { --k: #8b5cf6; --k-ink: #fff; }
+.root [data-kind="container"] { --k: #ff2e93; --k-ink: #fff; }
+.root [data-kind="text"] { --k: #00c2ff; --k-ink: #04263a; }
+.root [data-kind="richtext"] { --k: #ff8a00; --k-ink: #2b1500; }
+.root [data-kind="media"] { --k: #ffd400; --k-ink: #2b2300; }
+
+/* z-index 4 keeps the boxes under the sticky header (5) and forms a stacking context for the nesting order. */
+.layer { position: absolute; top: 0; left: 0; width: 0; height: 0; z-index: 4; pointer-events: none; }
+
+.box {
+  position: absolute; box-sizing: border-box;
+  border: 2px solid var(--k);
+  background: color-mix(in oklch, var(--k) 9%, transparent);
+  border-radius: 4px;
+  animation: ue-in 180ms ease-out both;
+}
+.box[data-kind="container"] { border-style: dashed; border-width: 3px; background: color-mix(in oklch, var(--k) 5%, transparent); }
+.box[data-kind="fragment"] { border-width: 3px; background: none; }
+
+/* Tags sit just above their box so the content stays readable; containers take the right edge. */
+.tag {
+  position: absolute; left: -2px; bottom: 100%; max-width: min(100%, 360px);
+  display: inline-flex; align-items: baseline; gap: 6px;
+  padding: 3px 7px; border-radius: 4px 4px 0 0;
+  font: 600 11px/1.3 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0;
+  color: var(--k-ink); background: var(--k);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  pointer-events: auto; cursor: help;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.18);
+}
+.tag strong { font-weight: 800; }
+.tag span { font-weight: 500; opacity: 0.85; overflow: hidden; text-overflow: ellipsis; }
+
+.box:is([data-kind="text"], [data-kind="richtext"], [data-kind="media"]) > .tag { left: 0; padding: 1px 6px; font-size: 10px; }
+.box[data-kind="container"] > .tag { left: auto; right: -3px; }
+.box[data-flush] > .tag { bottom: auto; top: 0; border-radius: 0 0 4px 0; }
+
+.legend {
+  /* Clear of the Next dev indicator in the bottom-left corner. */
+  position: fixed; left: 64px; bottom: 16px; z-index: 2000; width: 300px;
+  padding: 14px 16px 12px; border-radius: 14px;
+  background: #0b1424; color: #e8eef8;
+  font: 500 13px/1.4 var(--font-body-stack);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+  border: 1px solid rgb(255 255 255 / 0.08);
+}
+.legend header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.legend header p { font-weight: 700; font-size: 14px; color: #fff; }
+.legend header button {
+  width: 28px; height: 28px; border-radius: 50%; border: 0; cursor: pointer;
+  background: rgb(255 255 255 / 0.1); color: #fff; font-size: 18px; line-height: 1;
+}
+.legend header button:hover { background: rgb(255 255 255 / 0.2); }
+.legend ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.legend li { display: grid; grid-template-columns: 14px auto 1fr auto; align-items: center; gap: 8px; }
+.legend code { font: 11px ui-monospace, Menlo, monospace; color: #8fa3c0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.swatch { width: 14px; height: 14px; border-radius: 4px; background: var(--k); }
+.legend li[data-kind="container"] .swatch { background: none; border: 2px dashed var(--k); }
+.count { font: 700 12px ui-monospace, Menlo, monospace; color: var(--k); font-variant-numeric: tabular-nums; }
+.note { margin-top: 10px; font-size: 12px; color: #8fa3c0; }
+
+/* Footer switch */
+.toggle {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 6px 4px; border: 0; background: none; cursor: pointer;
+  font: 600 0.875rem var(--font-body-stack); color: var(--color-fog);
+}
+.toggle:hover { color: var(--color-paper); }
+.toggle:focus-visible { outline: 2px solid var(--color-brass); outline-offset: 4px; border-radius: 6px; }
+.track {
+  position: relative; width: 40px; height: 22px; border-radius: 999px;
+  background: color-mix(in oklch, var(--color-paper) 22%, transparent);
+  transition: background 160ms ease;
+}
+.thumb {
+  position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--color-paper); transition: transform 160ms ease;
+}
+.toggle[aria-checked="true"] .track { background: linear-gradient(90deg, #8b5cf6, #ff2e93, #ff8a00); }
+.toggle[aria-checked="true"] .thumb { transform: translateX(18px); }
+
+@keyframes ue-in { from { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .box { animation: none; }
+  .track, .thumb { transition: none; }
+}
+@media (max-width: 640px) {
+  .legend { left: 60px; right: 8px; bottom: 8px; width: auto; padding: 10px 12px; }
+  .legend header { margin-bottom: 6px; }
+  .legend ul { grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+  .legend li { grid-template-columns: 12px 1fr auto; }
+  .legend code, .note { display: none; }
+}

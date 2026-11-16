@@ -16,3 +16,7 @@
 @media (max-width: 640px) {
   .cols { grid-template-columns: 1fr; }
 }
+.demo {
+  margin-top: 32px; padding-top: 16px; display: flex; justify-content: flex-end;
+  border-top: 1px solid color-mix(in oklch, var(--color-paper) 14%, transparent);
+}

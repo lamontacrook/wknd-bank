@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Hanken_Grotesk, Source_Serif_4 } from "next/font/google";
 import { AEM_AUTHOR } from "@/lib/aem";
+import { UeOverlay } from "@/components/UeOverlay";
 import "./globals.css";
 
 const display = Source_Serif_4({
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <a className="skip" href="#main">Skip to content</a>
         {children}
+        <UeOverlay />
         <Script src="https://universal-editor-service.adobe.io/cors.js" strategy="afterInteractive" />
       </body>
     </html>

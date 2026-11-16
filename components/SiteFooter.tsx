@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Screen } from "@/lib/types";
 import { aueContainer, aueFragment, aueProp } from "@/lib/aue";
+import { UeOverlayToggle } from "./UeOverlayToggle";
 import styles from "./SiteFooter.module.css";
 
 const COLUMNS = [
@@ -40,6 +41,9 @@ export function SiteFooter({ screen }: { screen: Screen }) {
               </div>
             ))}
           </div>
+        </div>
+        <div className={styles.demo}>
+          <UeOverlayToggle />
         </div>
       </div>
     </footer>

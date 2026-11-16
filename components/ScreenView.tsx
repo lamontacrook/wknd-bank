@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AEM_AUTHOR, fetchScreen, type Source } from "@/lib/aem";
 import { aueContainer, aueFragment } from "@/lib/aue";
+import { inEditor } from "@/lib/editor";
 import type { Screen } from "@/lib/types";
 import { ModelManager } from "./ModelManager";
 import { SiteFooter } from "./SiteFooter";
@@ -12,14 +13,6 @@ type ViewSource = Source | "author";
 
 // Universal Editor loads the page in an iframe; there we re-read the screen from author with the
 // editor's IMS session so drafts and edits show up. Outside UE, the server-rendered data stays.
-function inEditor() {
-  if (typeof window === "undefined") return false;
-  try {
-    return window.self !== window.top || new URLSearchParams(window.location.search).has("aue");
-  } catch {
-    return true;
-  }
-}
 
 export function ScreenView({ initial, source: initialSource }: { initial: Screen; source: Source }) {
   const [screen, setScreen] = useState(initial);
