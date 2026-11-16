@@ -12,7 +12,9 @@ export const mockScreen = mock as unknown as Screen;
 export type Source = "aem" | "mock";
 
 export function queryUrl(host: string, path = HOME_PATH, variation = "master") {
-  const params = `;path=${encodeURIComponent(path)};variation=${encodeURIComponent(variation)}`;
+  // AEM doesn't decode %2F in persisted-query params: keep slashes literal, encode everything else.
+  const enc = (v: string) => encodeURIComponent(v).replace(/%2F/gi, "/");
+  const params = `;path=${enc(path)};variation=${enc(variation)}`;
   return `${host.replace(/\/$/, "")}/graphql/execute.json/${AEM_PROJECT}/${QUERY}${params}`;
 }
 
