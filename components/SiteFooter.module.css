@@ -17,6 +17,8 @@
   .cols { grid-template-columns: 1fr; }
 }
 .demo {
-  margin-top: 32px; padding-top: 16px; display: flex; justify-content: flex-end;
+  margin-top: 32px; padding-top: 16px; display: flex; justify-content: flex-end; align-items: center; gap: 24px; flex-wrap: wrap;
   border-top: 1px solid color-mix(in oklch, var(--color-paper) 14%, transparent);
 }
+.demoLink { font-weight: 600; font-size: 0.875rem; color: var(--color-fog); text-underline-offset: 3px; }
+.demoLink:hover { color: var(--color-paper); }

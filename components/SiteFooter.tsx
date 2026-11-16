@@ -43,6 +43,9 @@ export function SiteFooter({ screen }: { screen: Screen }) {
           </div>
         </div>
         <div className={styles.demo}>
+          <Link className={styles.demoLink} href="/architecture">
+            Architecture slides
+          </Link>
           <UeOverlayToggle />
         </div>
       </div>
