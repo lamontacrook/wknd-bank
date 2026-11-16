@@ -7,6 +7,16 @@ A demo website for a fictional bank, WKND Bank. It's a Next.js App Router front 
 
 Read all three before changing UI.
 
+### Stardust prototype (visual reference)
+
+The look and feel came from a Stardust redesign of the old WKND running site:
+
+- `stardust/direction.md`: the redesign direction, i.e. why the site looks this way.
+- `stardust/prototypes/index-proposed.html`: the approved home page prototype. It's a static, self-contained HTML file; open it in a browser.
+- `stardust/prototypes/index-shape.md`: the prototype's section-by-section brief.
+
+When you build a page, match the prototype's sections, order, spacing and responsive behavior. Implement it as the React components in the content model below, fed by Content Fragments. Never paste the prototype's HTML in. The prototype is a reference, not runtime code. If the prototype and `DESIGN.md` disagree, `DESIGN.md` wins.
+
 ## Commands
 
 ```sh
