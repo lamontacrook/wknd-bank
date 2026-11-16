@@ -56,7 +56,7 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className={styles.actions}>
-            <a className="link" href="#">Sign in</a>
+            {/* No "Sign in": a bank login link on a demo domain gets flagged as phishing by Google Safe Browsing. */}
             <a className="btn btn-primary" href="#open">Open an account</a>
           </div>
         </div>

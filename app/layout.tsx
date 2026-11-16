@@ -20,6 +20,8 @@ const body = Hanken_Grotesk({
 export const metadata: Metadata = {
   title: "WKND Bank — Banking that shows its work",
   description: "Clear rates, plain fees, and people who answer. A fictional bank demo on AEM headless.",
+  // A fictional bank should never be indexed; it also keeps the site out of phishing-classifier crawls.
+  robots: { index: false, follow: false },
   // Universal Editor: which AEM instance the data-aue-resource URNs (urn:aemconnection:…) point at.
   ...(AEM_AUTHOR ? { other: { "urn:adobe:aue:system:aemconnection": `aem:${AEM_AUTHOR}` } } : {}),
 };

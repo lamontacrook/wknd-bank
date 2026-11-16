@@ -1,0 +1,3 @@
+# WKND Bank is a fictional demo bank. Do not index.
+User-agent: *
+Disallow: /
