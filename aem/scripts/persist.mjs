@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Persists the generated query on an AEM author and runs it against the root page.
 // The AEM MCP token can't reach /graphql/* (403, outside its scopes), so this uses a developer token.
-//   AEM_HOST=https://author-pXXXX-eYYYY.adobeaemcloud.com AEM_TOKEN=<token> node persist.mjs <spec> [query.graphql]
+//   AEM_HOST=https://author-pXXXX-eYYYY.adobeaemcloud.com AEM_TOKEN=<token> node persist.mjs <spec> [query.graphql] [--no-publish]
 // AEM_TOKEN: author → Developer Console → Integrations → Local token (24h).
 // Prerequisite: the configuration has "GraphQL Persistent Queries" ticked.
 import { readFileSync } from "node:fs"
@@ -47,4 +47,15 @@ if (isMain(import.meta.url)) {
   const item = Object.values(run.json?.data || {})[0]?.item
   console.log(`Executed ${execUrl}`)
   console.log(JSON.stringify(item, null, 2).slice(0, 1500))
+
+  // Persisted queries live on author until replicated; publish answers 404 "Could not find Persisted Query" without this.
+  // Pass --no-publish to keep it author-only. The fragments and models must be published separately.
+  if (!process.argv.includes("--no-publish")) {
+    const rep = await call("POST", `${HOST}/graphql/replicate.json/${s.conf}/${name}`)
+    if (rep.status >= 400) {
+      console.error(`Publish failed: ${rep.status}\n${rep.text.slice(0, 500)}\nPublish it from GraphiQL (Persisted Queries → Publish) instead.`)
+      process.exit(1)
+    }
+    console.log(`Published ${s.conf}/${name} (${rep.status})`)
+  }
 }
