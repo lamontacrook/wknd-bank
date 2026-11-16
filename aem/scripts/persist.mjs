@@ -74,6 +74,18 @@ if (isMain(import.meta.url)) {
   // Persisted queries live on author until replicated; publish answers 404 "Could not find Persisted Query" without this.
   // Pass --no-publish to keep it author-only. The fragments and models must be published separately.
   if (!process.argv.includes("--no-publish")) {
+    // replicate.json answers 201 even when the query can't land on publish because its parent pages were never
+    // published (new conf). Activate the ancestors first; already-published ones are a no-op.
+    const pq = `/conf/${s.conf}/settings/graphql/persistentQueries`
+    for (const path of [`/conf/${s.conf}`, `/conf/${s.conf}/settings`, `/conf/${s.conf}/settings/graphql`, pq, `${pq}/${name}`]) {
+      const res = await fetch(`${HOST}/bin/replicate.json`, {
+        method: "POST",
+        headers: auth,
+        body: new URLSearchParams({ cmd: "Activate", path }),
+      })
+      if (res.status >= 400) console.warn(`  activate ${path}: ${res.status} ${(await res.text()).slice(0, 200)}`)
+      else console.log(`  activated ${path}`)
+    }
     const rep = await call("POST", `${HOST}/graphql/replicate.json/${s.conf}/${name}`)
     if (rep.status >= 400) {
       console.error(`Publish failed: ${rep.status}\n${rep.text.slice(0, 500)}\nPublish it from GraphiQL (Persisted Queries → Publish) instead.`)
