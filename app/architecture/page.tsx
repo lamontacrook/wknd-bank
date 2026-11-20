@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { slides } from "./slides";
+import { modelHref, models } from "./_deck/models";
 import s from "./_deck/deck.module.css";
 
 export const metadata: Metadata = {
@@ -22,6 +23,17 @@ export default function ArchitectureOverview() {
                   {i + 1} / {slides.length}
                 </span>
                 <span className={s.t}>{slide.title}</span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+        <h2 className={s.overviewSub}>Content models</h2>
+        <ol className={s.grid}>
+          {models.map((m) => (
+            <li key={m.id}>
+              <Link href={modelHref(m.id)}>
+                <span className={s.n}>{m.folder}/</span>
+                <span className={s.t}>{m.title}</span>
               </Link>
             </li>
           ))}

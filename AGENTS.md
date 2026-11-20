@@ -52,7 +52,7 @@ Use npm, not pnpm or yarn. Node 22+.
 | `lib/aue.ts` | `data-aue-*` helpers |
 | `components/ScreenView.tsx` | Client view; re-reads from author inside UE |
 | `components/ModelManager.tsx` | `_model.title` → component registry |
-| `app/architecture/` | Presenter deck at `/architecture` (19 slides). Content and code snippets live in `slides.tsx`; keep snippets in sync with the real files |
+| `app/architecture/` | Presenter deck at `/architecture` (19 slides). Content and code snippets live in `slides.tsx`; keep snippets in sync with the real files. Per-model detail slides at `/architecture/model/<id>` are generated from `aem/demo.spec.json` |
 
 ## AEM environment
 

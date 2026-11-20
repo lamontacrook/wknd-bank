@@ -5,7 +5,7 @@ import { FragmentTree, ModelGraph, ModelLegend } from "./_deck/ContentModel";
 import { ArchitectureDiagram, DiagramLegend } from "./_deck/Diagram";
 import s from "./_deck/deck.module.css";
 
-export type Slide = { title: string; lede?: string; tone?: "dark"; cover?: boolean; body: ReactNode };
+export type Slide = { id?: string; title: string; lede?: string; tone?: "dark"; cover?: boolean; body: ReactNode };
 
 const LAYOUT = `
 export const metadata: Metadata = {
@@ -235,6 +235,9 @@ const SCREEN_JSON = `
   ]
 }`;
 
+/** 1-based slide number for a slide with this id. */
+export const slideNumber = (id: string) => slides.findIndex((s) => s.id === id) + 1;
+
 export const slides: Slide[] = [
   {
     title: "Universal Editor on AEM headless",
@@ -334,10 +337,6 @@ export const slides: Slide[] = [
               <strong>Render attributes on the server</strong> so they are in the first HTML the editor sees.
             </li>
           </ul>
-          <p className={s.note}>
-            <strong>Angular SPAs</strong> follow the same contract: markup only, no SDK. Adobe&apos;s docs name Next.js, React and
-            Astro and ship no Angular sample.
-          </p>
         </div>
         <Code caption="app/layout.tsx" code={LAYOUT} hl={[3, 10, 11, 12, 16]} />
       </div>
@@ -407,11 +406,12 @@ export const slides: Slide[] = [
     ),
   },
   {
+    id: "models",
     title: "Nine content models",
     body: (
       <>
         <ModelGraph />
-        <ModelLegend enums />
+        <ModelLegend enums clickable />
       </>
     ),
   },
