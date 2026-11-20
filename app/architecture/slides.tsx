@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { Code } from "./_deck/Code";
 import { FragmentTree, ModelGraph, ModelLegend } from "./_deck/ContentModel";
@@ -120,43 +119,26 @@ const SCREEN_MAP = `
   ))}
 </main>`;
 
-const AUE_HELPERS = `
-export const cfResource = (item) =>
-  \`urn:aemconnection:\${item._path}/jcr:content/data/\${item._variation || "master"}\`;
-
-export const aueFragment = (item, { label, model, filter, type = "reference" } = {}) => ({
-  "data-aue-resource": cfResource(item),
-  "data-aue-type": type,
-  "data-aue-label": label || item._model.title,
-  ...(model && { "data-aue-model": model }),
-  ...(filter && { "data-aue-filter": filter }),
-});
-
-export const aueProp = (prop, type = "text", label = prop) => ({
-  "data-aue-prop": prop, "data-aue-type": type, "data-aue-label": label,
-});
-
-export const aueContainer = (prop, { label, filter } = {}) => ({
-  "data-aue-prop": prop, "data-aue-type": "container",
-  "data-aue-label": label || prop,
-  ...(filter && { "data-aue-filter": filter }),
-});`;
-
-const BANK_HERO = `
-export function BankHero({ content }: { content: BankHeroContent }) {
+const TAGGED = `
+export function Hero({ hero }) {
+  const urn = (f) => \`urn:aemconnection:\${f._path}/jcr:content/data/master\`;
   return (
-    <section className={styles.hero} {...aueFragment(content, { model: "bank-hero" })}>
-      <h1 {...aueProp("headline", "text", "Headline")}>{content.headline}</h1>
-      <p {...aueProp("subHeadline", "text", "Sub-headline")}>{content.subHeadline}</p>
+    <section data-aue-resource={urn(hero)}
+      data-aue-type="reference" data-aue-label="Hero">
+      <h1 data-aue-prop="title" data-aue-type="text">{hero.title}</h1>
+      <div data-aue-prop="body" data-aue-type="richtext"
+        dangerouslySetInnerHTML={{ __html: hero.body.html }} />
+      <img data-aue-prop="image" data-aue-type="media"
+        src={hero.image._publishUrl} alt="" />
 
-      <dl {...aueContainer("rates", { label: "Rates", filter: "bank-hero-rates" })}>
-        {content.rates.map((rate) => (
-          <div key={rate._path} {...aueFragment(rate, { model: "rate" })}>
-            <dt {...aueProp("product")}>{rate.product}</dt>
-            <dd><RateFigure rate={rate} /></dd>
-          </div>
+      <ul data-aue-prop="cards" data-aue-type="container" data-aue-filter="hero-cards">
+        {hero.cards.map((card) => (
+          <li key={card._path} data-aue-resource={urn(card)}
+            data-aue-type="reference" data-aue-label="Card">
+            <h2 data-aue-prop="title" data-aue-type="text">{card.title}</h2>
+          </li>
         ))}
-      </dl>
+      </ul>
     </section>
   );
 }`;
@@ -210,29 +192,6 @@ const RESPONSIVE = `
 
 @media (max-width: 1024px) {
   .split .grid { grid-template-columns: 1fr; gap: 48px; }
-}`;
-
-const SCREEN_JSON = `
-{
-  "_path": "/content/dam/wknd-bank/site/en/home/home",
-  "_variation": "master",
-  "_model": { "title": "Screen" },
-  "title": "WKND Bank — Home",
-  "block": [
-    {
-      "_path": "/content/dam/wknd-bank/site/en/home/hero",
-      "_model": { "title": "Bank Hero" },
-      "headline": "Banking that shows its work.",
-      "layout": "split",
-      "rates": [
-        {
-          "_path": "/content/dam/wknd-bank/site/en/rates/high-yield-savings",
-          "_model": { "title": "Rate" },
-          "product": "High-yield savings", "rate": 0, "status": "sample"
-        }
-      ]
-    }
-  ]
 }`;
 
 /** 1-based slide number for a slide with this id. */
@@ -363,9 +322,6 @@ export const slides: Slide[] = [
             <li>
               <strong><code>cfFolder</code></strong> says where in Assets the new fragment is saved.
             </li>
-            <li>
-              Generated from <code>aem/demo.spec.json</code> by <code>npm run aem:gen</code>. Don&apos;t edit it by hand.
-            </li>
           </ul>
         </div>
         <Code caption="public/component-definition.json" lang="json" code={DEFINITION} hl={[2, 5, 6]} />
@@ -387,12 +343,13 @@ export const slides: Slide[] = [
               <code>name</code> is the fragment field it saves to, and <code>label</code> is what the author reads.
             </li>
             <li>
-              <strong>Dropdowns limit the choices</strong>, so <code>layout</code> can only be <code>split</code> or{" "}
-              <code>stacked</code>, never a typo.
+              <strong>Dropdowns limit the choices</strong> to a fixed list of values, so an author can&apos;t enter one the
+              component doesn&apos;t support.
             </li>
             <li>
-              <strong>Only four models need a form</strong>: Bank Hero, Rate, Feature Split and Cta Band, the ones with
-              dropdowns. The rest use the Content Fragment Model in AEM as-is.
+              <strong>A form is optional for fragments.</strong> Without one, the panel shows the Content Fragment Model&apos;s
+              fields. Add one when you need a custom input such as a dropdown; it replaces those fields, so list every field
+              authors should edit.
             </li>
           </ul>
         </div>
@@ -408,18 +365,19 @@ export const slides: Slide[] = [
         <div className={s.col}>
           <ul className={s.list}>
             <li>
-              <strong>A container is a list authors can add to and reorder</strong>, like the sections of a page or the rates in
-              a hero.
+              <strong>A container is a list authors can add to and reorder</strong>, like the sections of a page or the cards in
+              a list.
             </li>
             <li>
               <strong>Each filter is a named allow-list.</strong> The page points a container at one with{" "}
               <code>data-aue-filter</code>.
             </li>
             <li>
-              <strong><code>screen-block</code></strong> lets a page hold the five section types and nothing else.
+              <strong>List the component ids a container may hold.</strong> Anything else is left out of its <em>Add</em> menu.
             </li>
             <li>
-              <strong><code>bank-hero-rates</code></strong> lets a hero hold only Rate fragments.
+              <strong>Give each container its own filter</strong>: one for a page&apos;s sections, another for the items inside a
+              section.
             </li>
             <li>
               <strong>Ids tie the three files together</strong>: filter → component → model.
@@ -586,12 +544,33 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "Instrument a component with three helpers",
-    lede: "Existing components keep their markup and styles. They gain attribute spreads, and their data must carry _path and _model.",
+    title: "Tag a component for Universal Editor",
+    lede: "Add data-aue-* attributes to the markup you already render. No library, no SDK.",
     body: (
-      <div className={s.cols}>
-        <Code caption="lib/aue.ts (types trimmed)" code={AUE_HELPERS} hl={[2, 5, 12, 16]} />
-        <Code caption="components/BankHero.tsx (trimmed)" code={BANK_HERO} hl={[3, 4, 5, 7, 9, 10]} />
+      <div className={`${s.cols} ${s.colsWide}`}>
+        <div className={s.col}>
+          <ul className={s.list}>
+            <li>
+              <strong>1. Mark the fragment.</strong> On the element that renders it, set <code>data-aue-resource</code> to{" "}
+              <code>urn:aemconnection:</code> + its path + <code>/jcr:content/data/master</code>, with{" "}
+              <code>data-aue-type=&quot;reference&quot;</code> and a label.
+            </li>
+            <li>
+              <strong>2. Mark each editable field.</strong> <code>data-aue-prop</code> names the fragment field;{" "}
+              <code>data-aue-type</code> is <code>text</code>, <code>richtext</code> or <code>media</code>. A field belongs to
+              the nearest fragment above it.
+            </li>
+            <li>
+              <strong>3. Mark lists of fragments.</strong> The wrapper is a <code>container</code> with a filter; each item is
+              its own fragment.
+            </li>
+            <li>
+              <strong>4. Ask for the path.</strong> Your query must return each fragment&apos;s <code>_path</code>, or you
+              can&apos;t build the URN.
+            </li>
+          </ul>
+        </div>
+        <Code caption="Hero.tsx (example)" code={TAGGED} hl={[4, 5, 6, 7, 9, 12, 14, 15, 16]} />
       </div>
     ),
   },
@@ -667,138 +646,6 @@ export const slides: Slide[] = [
           <p className={s.note}>
             Universal Editor previews device widths but has <strong>no responsive layout grid</strong>, unlike the classic Page
             Editor. Authors pick a variant; developers own the breakpoints.
-          </p>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "The “design file” is the Screen fragment",
-    body: (
-      <div className={s.cols}>
-        <Code caption="GET …/screen-by-path → data.screenByPath.item (excerpt)" lang="json" code={SCREEN_JSON} hl={[5, 11, 12]} />
-        <div className={s.col}>
-          <ul className={s.list}>
-            <li>
-              <strong>There is no separate design file</strong> for headless. A page is a Screen fragment whose <code>block</code>{" "}
-              field references section fragments.
-            </li>
-            <li>
-              <strong>Stored in AEM Assets</strong> as Content Fragments under <code>/content/dam/wknd-bank</code>, not as a file.
-            </li>
-            <li>
-              <strong>Returned by the GraphQL API</strong> through persisted queries on author and publish. The Content Fragment
-              Delivery OpenAPI is the REST alternative.
-            </li>
-            <li>
-              <strong>Design choices are content.</strong> Order, variants such as <code>layout</code>, and links all arrive in this
-              JSON.
-            </li>
-            <li>
-              The three Universal Editor JSON files are app configuration. Here they ship from <code>/public</code>, not from AEM.
-            </li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "Making it ready for AI agents",
-    lede: "The delivery JSON is already clean and typed. The agent-shaped format is a thin layer you build.",
-    body: (
-      <div className={s.cols}>
-        <div className={s.col}>
-          <h2>What you get today</h2>
-          <ul className={s.list}>
-            <li>
-              Typed JSON where every node names its model (<code>_model.title</code>) and its source (<code>_path</code>).
-            </li>
-            <li>
-              <code>component-models.json</code> already labels and describes every field, so it can serve as the schema.
-            </li>
-            <li>Persisted queries are a stable, cacheable, versionable API.</li>
-            <li>The AEM MCP server lets agents read and write fragments. This demo&apos;s models and fragments were created with it.</li>
-          </ul>
-        </div>
-        <div className={s.col}>
-          <h2>What you would build</h2>
-          <ul className={s.list}>
-            <li>
-              A transform, such as a Next.js route handler at <code>/api/agent/screen</code>, that flattens references and drops
-              presentation-only fields like <code>layout</code>.
-            </li>
-            <li>Field descriptions merged in from the models, so an agent knows what each value means.</li>
-            <li>Output as JSON-LD or Markdown, plus disclosures kept beside the rates they qualify.</li>
-            <li>Guardrails for agents that write, such as the sample status on rates and a human publish step.</li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "Go-live checklist and the gotchas we hit",
-    body: (
-      <div className={s.cols}>
-        <div className={s.col}>
-          <h2>Checklist</h2>
-          <ul className={s.list}>
-            <li>Models, fragments, the GraphQL endpoint and persisted queries are published.</li>
-            <li>Author CORS allows the app origin with credentials, and the login-token cookie is Partitioned.</li>
-            <li>
-              The app runs on HTTPS with <code>NEXT_PUBLIC_AEM_AUTHOR</code> and <code>NEXT_PUBLIC_AEM_HOST</code> set.
-            </li>
-            <li>Every editable element renders on the server with its <code>data-aue-*</code> attributes.</li>
-            <li>No more than 25 instrumented AEM resources on a page.</li>
-          </ul>
-        </div>
-        <div className={s.col}>
-          <h2>Gotchas</h2>
-          <ul className={s.list}>
-            <li>
-              <code>%2F</code> in a persisted-query path returns &ldquo;no resource available&rdquo;. Keep slashes literal.
-            </li>
-            <li>
-              A new <code>/conf</code> needs its parent pages published too, or publish answers 404 even after replication succeeds.
-            </li>
-            <li>A local certificate the browser doesn&apos;t trust fails silently inside the editor iframe. Install the mkcert CA.</li>
-            <li>Published pages are cached for minutes, so a publish shows up after the cache window.</li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "See it working",
-    tone: "dark",
-    lede: "Turn on “Show Universal Editor data” in the site footer to outline every instrumented element by type.",
-    body: (
-      <div className={s.cols}>
-        <ul className={s.list}>
-          <li>
-            <code>lib/aue.ts</code>: URN and attribute helpers
-          </li>
-          <li>
-            <code>components/ModelManager.tsx</code>: model title → component
-          </li>
-          <li>
-            <code>components/ScreenView.tsx</code>: author re-read in the editor
-          </li>
-          <li>
-            <code>lib/load-screen.ts</code>: cached publish read with mock fallback
-          </li>
-          <li>
-            <code>public/component-*.json</code>: the editor&apos;s registry
-          </li>
-          <li>
-            <code>aem/screen-by-path.graphql</code>: the persisted query
-          </li>
-        </ul>
-        <div className={s.col}>
-          <p className={s.lead}>Questions, then open the home page in Universal Editor and edit a rate live.</p>
-          <p>
-            <Link className="btn btn-accent" href="/">
-              Open the site
-            </Link>
           </p>
         </div>
       </div>
