@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { Code } from "./_deck/Code";
 import { FragmentTree, ModelGraph, ModelLegend } from "./_deck/ContentModel";
@@ -193,29 +192,6 @@ const RESPONSIVE = `
 
 @media (max-width: 1024px) {
   .split .grid { grid-template-columns: 1fr; gap: 48px; }
-}`;
-
-const SCREEN_JSON = `
-{
-  "_path": "/content/dam/wknd-bank/site/en/home/home",
-  "_variation": "master",
-  "_model": { "title": "Screen" },
-  "title": "WKND Bank — Home",
-  "block": [
-    {
-      "_path": "/content/dam/wknd-bank/site/en/home/hero",
-      "_model": { "title": "Bank Hero" },
-      "headline": "Banking that shows its work.",
-      "layout": "split",
-      "rates": [
-        {
-          "_path": "/content/dam/wknd-bank/site/en/rates/high-yield-savings",
-          "_model": { "title": "Rate" },
-          "product": "High-yield savings", "rate": 0, "status": "sample"
-        }
-      ]
-    }
-  ]
 }`;
 
 /** 1-based slide number for a slide with this id. */
@@ -670,138 +646,6 @@ export const slides: Slide[] = [
           <p className={s.note}>
             Universal Editor previews device widths but has <strong>no responsive layout grid</strong>, unlike the classic Page
             Editor. Authors pick a variant; developers own the breakpoints.
-          </p>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "The “design file” is the Screen fragment",
-    body: (
-      <div className={s.cols}>
-        <Code caption="GET …/screen-by-path → data.screenByPath.item (excerpt)" lang="json" code={SCREEN_JSON} hl={[5, 11, 12]} />
-        <div className={s.col}>
-          <ul className={s.list}>
-            <li>
-              <strong>There is no separate design file</strong> for headless. A page is a Screen fragment whose <code>block</code>{" "}
-              field references section fragments.
-            </li>
-            <li>
-              <strong>Stored in AEM Assets</strong> as Content Fragments under <code>/content/dam/wknd-bank</code>, not as a file.
-            </li>
-            <li>
-              <strong>Returned by the GraphQL API</strong> through persisted queries on author and publish. The Content Fragment
-              Delivery OpenAPI is the REST alternative.
-            </li>
-            <li>
-              <strong>Design choices are content.</strong> Order, variants such as <code>layout</code>, and links all arrive in this
-              JSON.
-            </li>
-            <li>
-              The three Universal Editor JSON files are app configuration. Here they ship from <code>/public</code>, not from AEM.
-            </li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "Making it ready for AI agents",
-    lede: "The delivery JSON is already clean and typed. The agent-shaped format is a thin layer you build.",
-    body: (
-      <div className={s.cols}>
-        <div className={s.col}>
-          <h2>What you get today</h2>
-          <ul className={s.list}>
-            <li>
-              Typed JSON where every node names its model (<code>_model.title</code>) and its source (<code>_path</code>).
-            </li>
-            <li>
-              <code>component-models.json</code> already labels and describes every field, so it can serve as the schema.
-            </li>
-            <li>Persisted queries are a stable, cacheable, versionable API.</li>
-            <li>The AEM MCP server lets agents read and write fragments. This demo&apos;s models and fragments were created with it.</li>
-          </ul>
-        </div>
-        <div className={s.col}>
-          <h2>What you would build</h2>
-          <ul className={s.list}>
-            <li>
-              A transform, such as a Next.js route handler at <code>/api/agent/screen</code>, that flattens references and drops
-              presentation-only fields like <code>layout</code>.
-            </li>
-            <li>Field descriptions merged in from the models, so an agent knows what each value means.</li>
-            <li>Output as JSON-LD or Markdown, plus disclosures kept beside the rates they qualify.</li>
-            <li>Guardrails for agents that write, such as the sample status on rates and a human publish step.</li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "Go-live checklist and the gotchas we hit",
-    body: (
-      <div className={s.cols}>
-        <div className={s.col}>
-          <h2>Checklist</h2>
-          <ul className={s.list}>
-            <li>Models, fragments, the GraphQL endpoint and persisted queries are published.</li>
-            <li>Author CORS allows the app origin with credentials, and the login-token cookie is Partitioned.</li>
-            <li>
-              The app runs on HTTPS with <code>NEXT_PUBLIC_AEM_AUTHOR</code> and <code>NEXT_PUBLIC_AEM_HOST</code> set.
-            </li>
-            <li>Every editable element renders on the server with its <code>data-aue-*</code> attributes.</li>
-            <li>No more than 25 instrumented AEM resources on a page.</li>
-          </ul>
-        </div>
-        <div className={s.col}>
-          <h2>Gotchas</h2>
-          <ul className={s.list}>
-            <li>
-              <code>%2F</code> in a persisted-query path returns &ldquo;no resource available&rdquo;. Keep slashes literal.
-            </li>
-            <li>
-              A new <code>/conf</code> needs its parent pages published too, or publish answers 404 even after replication succeeds.
-            </li>
-            <li>A local certificate the browser doesn&apos;t trust fails silently inside the editor iframe. Install the mkcert CA.</li>
-            <li>Published pages are cached for minutes, so a publish shows up after the cache window.</li>
-          </ul>
-        </div>
-      </div>
-    ),
-  },
-  {
-    title: "See it working",
-    tone: "dark",
-    lede: "Turn on “Show Universal Editor data” in the site footer to outline every instrumented element by type.",
-    body: (
-      <div className={s.cols}>
-        <ul className={s.list}>
-          <li>
-            <code>lib/aue.ts</code>: URN and attribute helpers
-          </li>
-          <li>
-            <code>components/ModelManager.tsx</code>: model title → component
-          </li>
-          <li>
-            <code>components/ScreenView.tsx</code>: author re-read in the editor
-          </li>
-          <li>
-            <code>lib/load-screen.ts</code>: cached publish read with mock fallback
-          </li>
-          <li>
-            <code>public/component-*.json</code>: the editor&apos;s registry
-          </li>
-          <li>
-            <code>aem/screen-by-path.graphql</code>: the persisted query
-          </li>
-        </ul>
-        <div className={s.col}>
-          <p className={s.lead}>Questions, then open the home page in Universal Editor and edit a rate live.</p>
-          <p>
-            <Link className="btn btn-accent" href="/">
-              Open the site
-            </Link>
           </p>
         </div>
       </div>
