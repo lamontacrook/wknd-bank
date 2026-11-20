@@ -52,7 +52,7 @@ Use npm, not pnpm or yarn. Node 22+.
 | `lib/aue.ts` | `data-aue-*` helpers |
 | `components/ScreenView.tsx` | Client view; re-reads from author inside UE |
 | `components/ModelManager.tsx` | `_model.title` → component registry |
-| `app/architecture/` | Presenter deck at `/architecture` (17 slides). Content and code snippets live in `slides.tsx`; keep snippets in sync with the real files. Per-model detail slides at `/architecture/model/<id>` are generated from `aem/demo.spec.json` |
+| `app/architecture/` | Presenter deck at `/architecture` (17 slides). Content and code snippets live in `slides.tsx`. Slides teach the generic setup with a `my-site` example in Lamont's voice; WKND Bank appears only as the labeled content-model example. Per-model detail slides at `/architecture/model/<id>` are generated from `aem/demo.spec.json` |
 
 ## AEM environment
 

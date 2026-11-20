@@ -54,9 +54,6 @@ async function ModelView({ params }: { params: PageProps<"/architecture/model/[m
             <span>
               Fragments live in <code>{folderPath(model.folder)}</code>
             </span>
-            <span>
-              Defined in <code>aem/demo.spec.json</code>
-            </span>
           </p>
         </div>
         <footer className={s.foot}>

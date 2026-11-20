@@ -6,7 +6,7 @@ import s from "./_deck/deck.module.css";
 
 export const metadata: Metadata = {
   title: "Architecture: Universal Editor on AEM headless · WKND Bank",
-  description: "Slides on how WKND Bank's Next.js site is wired to AEM Content Fragments and Universal Editor.",
+  description: "How to connect a Next.js site to AEM Content Fragments and make it editable in Universal Editor.",
 };
 
 export default function ArchitectureOverview() {
@@ -14,7 +14,7 @@ export default function ArchitectureOverview() {
     <main id="main" className={s.overview}>
       <div className="wrap">
         <h1>Universal Editor on AEM headless</h1>
-        <p>{slides.length} slides on the architecture and the React implementation behind WKND Bank.</p>
+        <p>{slides.length} slides on connecting a Next.js front end to AEM Content Fragments and Universal Editor.</p>
         <ol className={s.grid}>
           {slides.map((slide, i) => (
             <li key={slide.title}>
@@ -27,7 +27,7 @@ export default function ArchitectureOverview() {
             </li>
           ))}
         </ol>
-        <h2 className={s.overviewSub}>Content models</h2>
+        <h2 className={s.overviewSub}>Example: the WKND Bank content models</h2>
         <ol className={s.grid}>
           {models.map((m) => (
             <li key={m.id}>
