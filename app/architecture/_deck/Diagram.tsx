@@ -49,16 +49,16 @@ export function ArchitectureDiagram() {
       <text x="70" y="196" fontSize="17" fill={INK}>&lt;meta urn:adobe:aue:system:aemconnection&gt; → author</text>
       <text x="70" y="224" fontSize="17" fill={INK}>data-aue-* attributes on every editable element</text>
       <text x="70" y="252" fontSize="17" fill={INK}>component definition, models, filters (3 JSON files)</text>
-      <text x="70" y="280" fontSize="17" fill={INK}>inEditor() → re-read the screen from author</text>
+      <text x="70" y="280" fontSize="17" fill={INK}>inside the editor → re-read the page from author</text>
 
       {/* AEM author */}
       <rect x="840" y="10" width="540" height="320" rx="14" fill="#102a4c" />
       <text x="866" y="50" fontSize="25" fontWeight="700" fill="#faf8f3">AEM author</text>
       <text x="866" y="76" fontSize="17" fill={FOG}>Where content is written and modelled</text>
       {[
-        ["Content Fragment models", "/conf/wknd-bank/…/cfm/models"],
-        ["Content Fragments", "/content/dam/wknd-bank/site/en"],
-        ["Persisted GraphQL query", "wknd-bank/screen-by-path"],
+        ["Content Fragment models", "/conf/<project>/…/cfm/models"],
+        ["Content Fragments", "/content/dam/<project>/…"],
+        ["Persisted GraphQL query", "<project>/page-by-path"],
         ["Login session (IMS)", "login-token cookie, Partitioned"],
       ].map(([a, b], i) => (
         <g key={a} transform={`translate(866 ${116 + i * 52})`}>
@@ -76,15 +76,15 @@ export function ArchitectureDiagram() {
 
       <rect x="400" y="410" width="360" height="140" rx="14" fill="#faf8f3" stroke={HARBOR} strokeWidth="2.5" />
       <text x="424" y="448" fontSize="21" fontWeight="700" fill={INK}>Next.js server</text>
-      <text x="424" y="478" fontSize="16" fill={MUTED}>loadScreen() · &quot;use cache&quot; (minutes)</text>
-      <text x="424" y="502" fontSize="16" fill={MUTED}>ModelManager picks components</text>
-      <text x="424" y="526" fontSize="16" fill={MUTED}>Falls back to mock JSON</text>
+      <text x="424" y="478" fontSize="16" fill={MUTED}>Fetches publish, caches for minutes</text>
+      <text x="424" y="502" fontSize="16" fill={MUTED}>Model title picks the component</text>
+      <text x="424" y="526" fontSize="16" fill={MUTED}>Falls back to a local copy</text>
 
       <rect x="840" y="410" width="540" height="140" rx="14" fill="#faf8f3" stroke={INK} strokeWidth="2" />
       <text x="866" y="448" fontSize="21" fontWeight="700" fill={INK}>AEM publish + CDN</text>
       <text x="866" y="478" fontSize="16" fill={MUTED}>Persisted query as a cacheable GET</text>
       <text x="866" y="506" fontSize="15" fill={INK} fontFamily="ui-monospace, Menlo, monospace">
-        /graphql/execute.json/wknd-bank/screen-by-path
+        /graphql/execute.json/&lt;project&gt;/page-by-path
       </text>
 
       {/* Visitor path */}

@@ -8,8 +8,8 @@ export type Slide = { id?: string; title: string; lede?: string; tone?: "dark"; 
 
 const LAYOUT = `
 export const metadata: Metadata = {
-  // Which AEM the urn:aemconnection:… resources live on: author.
-  other: { "urn:adobe:aue:system:aemconnection": \`aem:\${AEM_AUTHOR}\` },
+  // Point the editor at your author tier. Every urn:aemconnection: resolves against it.
+  other: { "urn:adobe:aue:system:aemconnection": \`aem:\${process.env.NEXT_PUBLIC_AEM_AUTHOR}\` },
 };
 
 export default function RootLayout({ children }) {
@@ -30,23 +30,23 @@ export default function RootLayout({ children }) {
 
 const DEFINITION = `
 {
-  "title": "Bank Hero", "id": "bank-hero", "model": "bank-hero",
+  "title": "Hero", "id": "hero", "model": "hero",
   "plugins": { "aem": { "cf": {
-    "name": "bank-hero", "title": "Bank Hero",
-    "cfModel": "/conf/wknd-bank/settings/dam/cfm/models/bank-hero",
-    "cfFolder": "/content/dam/wknd-bank/site/en/home"
+    "name": "hero", "title": "Hero",
+    "cfModel": "/conf/my-site/settings/dam/cfm/models/hero",
+    "cfFolder": "/content/dam/my-site/home"
   } } }
 }`;
 
 const MODEL = `
 {
-  "id": "bank-hero",
+  "id": "hero",
   "fields": [
-    { "component": "text", "name": "headline",
-      "label": "Headline", "valueType": "string", "required": true },
+    { "component": "text", "name": "title",
+      "label": "Title", "valueType": "string", "required": true },
     { "component": "select", "name": "layout", "label": "Layout",
       "options": [
-        { "name": "Split: copy beside the rate ledger", "value": "split" },
+        { "name": "Split: copy beside the image", "value": "split" },
         { "name": "Stacked: one column", "value": "stacked" }
       ] }
   ]
@@ -54,69 +54,62 @@ const MODEL = `
 
 const FILTERS = `
 [
-  { "id": "screen-block",
-    "components": ["bank-hero", "rates-table", "product-list",
-                   "feature-split", "cta-band"] },
-  { "id": "bank-hero-rates", "components": ["rate"] }
+  { "id": "page-sections",
+    "components": ["hero", "card-list", "cta"] },
+  { "id": "hero-cards", "components": ["card"] }
 ]`;
 
 const QUERY = `
-query screenByPath($path: String!, $variation: String = "master") {
-  screenByPath(_path: $path, variation: $variation) {
+query pageByPath($path: String!, $variation: String = "master") {
+  pageByPath(_path: $path, variation: $variation) {
     item {
       _path _variation _model { title _path }
       title
-      block {
-        ... on BankHeroModel {
+      sections {
+        ... on HeroModel {
           _path _variation _model { title _path }
-          headline
+          title
           layout
-          rates {
-            ... on RateModel {
+          cards {
+            ... on CardModel {
               _path _variation _model { title _path }
-              product  rate  status
+              title
             }
           }
         }
-        ... on RatesTableModel { … }
+        ... on CtaModel { … }
       }
     }
   }
 }`;
 
 const QUERY_URL = `
-export function queryUrl(host: string, path = HOME_PATH, variation = "master") {
-  // AEM doesn't decode %2F in persisted-query params: keep slashes literal.
-  const enc = (v: string) => encodeURIComponent(v).replace(/%2F/gi, "/");
-  return \`\${host}/graphql/execute.json/wknd-bank/screen-by-path\` +
+export function queryUrl(host, path, variation = "master") {
+  // AEM doesn't decode %2F in persisted-query params, so keep slashes literal.
+  const enc = (v) => encodeURIComponent(v).replace(/%2F/gi, "/");
+  return \`\${host}/graphql/execute.json/my-site/page-by-path\` +
     \`;path=\${enc(path)};variation=\${enc(variation)}\`;
 }`;
 
 const MODEL_MANAGER = `
-// Keyed on the CF model title without spaces: "Bank Hero" → BankHero.
-export const componentMapping = {
-  BankHero,
-  RatesTable,
-  ProductList,
-  FeatureSplit,
-  CtaBand,
-};
+// Key on the CF model title without spaces: "Card List" → CardList.
+const components = { Hero, CardList, Cta };
 
-export function ModelManager({ content }: { content: Block }) {
-  const key = content?._model?.title?.replace(/\\s+/g, "") ?? "";
-  const Component = componentMapping[key];
-  if (Component) return <Component content={content} />;
-  return null; // dev builds show "Add <model> to ModelManager"
+export function ModelManager({ content }) {
+  const key = content._model.title.replace(/\\s+/g, "");
+  const Component = components[key];
+  return Component ? <Component content={content} /> : null;
 }`;
 
-const SCREEN_MAP = `
-<main
-  {...aueFragment(screen, { label: "Screen", type: "container" })}
-  {...aueContainer("block", { label: "Sections", filter: "screen-block" })}
->
-  {screen.block.map((block) => (
-    <ModelManager key={block._path} content={block} />
-  ))}
+const PAGE_MAP = `
+<main data-aue-resource={urn(page)}
+  data-aue-type="reference" data-aue-label="Page">
+  <div data-aue-prop="sections" data-aue-type="container"
+    data-aue-filter="page-sections" data-aue-label="Sections">
+    {page.sections.map((section) => (
+      <ModelManager key={section._path} content={section} />
+    ))}
+  </div>
 </main>`;
 
 const TAGGED = `
@@ -144,49 +137,44 @@ export function Hero({ hero }) {
 }`;
 
 const RENDERED = `
-<section data-aue-resource="urn:aemconnection:/content/dam/wknd-bank/site/en/home/hero/jcr:content/data/master"
-  data-aue-type="reference" data-aue-label="Bank Hero" data-aue-model="bank-hero">
-  <h1 data-aue-prop="headline" data-aue-type="text" data-aue-label="Headline">
-    Banking that shows its work.
+<section data-aue-resource="urn:aemconnection:/content/dam/my-site/home/hero/jcr:content/data/master"
+  data-aue-type="reference" data-aue-label="Hero" data-aue-model="hero">
+  <h1 data-aue-prop="title" data-aue-type="text" data-aue-label="Title">
+    Welcome to My Site.
   </h1>
-  <dl data-aue-prop="rates" data-aue-type="container" data-aue-filter="bank-hero-rates">
-    <div data-aue-resource="urn:aemconnection:/content/dam/wknd-bank/site/en/rates/high-yield-savings/jcr:content/data/master"
-      data-aue-type="reference" data-aue-model="rate">…</div>
-  </dl>
+  <ul data-aue-prop="cards" data-aue-type="container" data-aue-filter="hero-cards">
+    <li data-aue-resource="urn:aemconnection:/content/dam/my-site/shared/cards/savings/jcr:content/data/master"
+      data-aue-type="reference" data-aue-label="Card">…</li>
+  </ul>
 </section>`;
 
-const LOAD_SCREEN = `
-// lib/load-screen.ts: server only, published content, cached for minutes.
-export async function loadScreen(path = HOME_PATH) {
+const LOAD_PAGE = `
+// Server: published content, cached for a few minutes.
+export async function loadPage(path) {
   "use cache";
   cacheLife("minutes");
-  if (!AEM_HOST) return { screen: mockScreen, source: "mock" };
   try {
-    return { screen: await fetchScreen(AEM_HOST, { path }), source: "aem" };
+    return await fetchPage(process.env.AEM_PUBLISH, path);
   } catch {
-    return { screen: mockScreen, source: "mock" };
+    return fallbackPage; // a local copy, so the page never breaks
   }
 }`;
 
-const SCREEN_VIEW = `
-// components/ScreenView.tsx: client. Inside UE, re-read from author.
-useEffect(() => {
-  if (!AEM_AUTHOR || !inEditor()) return;
-  fetchScreen(AEM_AUTHOR, {
-    path: initial._path,
-    init: { credentials: "include", cache: "no-store" },
-  }).then((s) => {
-    setScreen(s);
-    setSource("author");
-  });
-}, [initial._path]);
+const EDITOR_READ = `
+// Client: inside the editor, re-read the same page from author.
+const inEditor = () =>
+  window.self !== window.top || new URLSearchParams(location.search).has("aue");
 
-// lib/editor.ts
-export const inEditor = () =>
-  window.self !== window.top || new URLSearchParams(location.search).has("aue");`;
+useEffect(() => {
+  if (!inEditor()) return;
+  fetchPage(process.env.NEXT_PUBLIC_AEM_AUTHOR, page._path, {
+    credentials: "include",
+    cache: "no-store",
+  }).then(setPage);
+}, [page._path]);`;
 
 const RESPONSIVE = `
-/* components/BankHero.module.css */
+/* Hero.module.css */
 .split .grid   { grid-template-columns: 1.15fr 0.85fr; }
 .stacked .grid { grid-template-columns: 1fr; max-width: 820px; }
 
@@ -208,11 +196,11 @@ export const slides: Slide[] = [
           Edit the <em>real</em> React site, in place.
         </h1>
         <p>
-          How WKND Bank&apos;s Next.js front end reads Content Fragments from AEM and becomes editable in Universal Editor: the
-          architecture, then the React code that makes it work.
+          Let&apos;s walk through how to connect a Next.js front end to AEM Content Fragments and make it editable in Universal
+          Editor. We&apos;ll start with the architecture, then model the content, then tag the components.
         </p>
         <p className={s.meta}>
-          <span>Next.js 16 · React 19</span>
+          <span>Next.js · React</span>
           <span>AEM as a Cloud Service</span>
           <span>Content Fragments + persisted GraphQL</span>
         </p>
@@ -229,23 +217,22 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "Visitors read publish. Editors read author.",
-    lede: "The same page, the same query and the same components. Only the host it reads from changes.",
+    title: "Visitors read publish. Authors read author.",
+    lede: "It's the same page, the same query and the same components. The only thing that changes is the host you read from.",
     body: (
       <div className={s.cols}>
         <div className={`${s.col} ${s.laneVisitor}`}>
           <h2 className={s.laneTitle}>A visitor loads the page</h2>
           <ol className={s.steps}>
-            <li>The request hits the Next.js route, <code>app/page.tsx</code>.</li>
+            <li>The request hits your Next.js route.</li>
             <li>
-              <code>loadScreen()</code> runs the persisted query on <strong>publish</strong>. The result is cached for minutes with{" "}
-              <code>&quot;use cache&quot;</code>.
+              The server runs the persisted query against <strong>publish</strong> and caches the result for a few minutes.
             </li>
             <li>
-              <code>ModelManager</code> turns each fragment into a React section. The HTML ships with <code>data-aue-*</code> already
-              in it, and it does nothing outside the editor.
+              Each fragment maps to a React component. The HTML already carries the <code>data-aue-*</code> attributes, and
+              outside the editor they don&apos;t do anything.
             </li>
-            <li>If AEM can&apos;t be reached, the page renders the bundled mock instead of failing.</li>
+            <li>If AEM can&apos;t be reached, fall back to a local copy so the page still renders.</li>
           </ol>
         </div>
         <div className={`${s.col} ${s.laneEditor}`}>
@@ -253,15 +240,15 @@ export const slides: Slide[] = [
           <ol className={s.steps}>
             <li>Universal Editor loads the same URL in an iframe.</li>
             <li>
-              <code>cors.js</code> connects the page. The editor reads the connection meta, the three JSON files and every{" "}
-              <code>data-aue-*</code> element.
+              <code>cors.js</code> connects the page. The editor reads the connection meta tag, the three JSON files and every{" "}
+              <code>data-aue-*</code> attribute.
             </li>
             <li>
-              <code>inEditor()</code> is true, so <code>ScreenView</code> re-runs the query on <strong>author</strong> with{" "}
-              <code>credentials: &quot;include&quot;</code>. Drafts show up.
+              The app sees it&apos;s inside the editor and re-runs the query against <strong>author</strong> with{" "}
+              <code>credentials: &quot;include&quot;</code>, so drafts show up.
             </li>
             <li>
-              Edits are written to the fragment named by <code>data-aue-resource</code>. Publishing pushes them to visitors.
+              Edits save to the fragment named in <code>data-aue-resource</code>. Publish, and visitors see them.
             </li>
           </ol>
         </div>
@@ -269,31 +256,33 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "Runtime work before Universal Editor can open a page",
+    title: "Before Universal Editor can open your page",
     body: (
       <div className={`${s.cols} ${s.colsWide}`}>
         <div className={s.col}>
           <ul className={s.list}>
             <li>
-              <strong>HTTPS everywhere</strong>, localhost included (<code>npm run dev:https</code>). An HTTPS editor can&apos;t frame
-              an HTTP page.
+              <strong>Use HTTPS everywhere</strong>, localhost included (<code>next dev --experimental-https</code>). The editor
+              runs on HTTPS and can&apos;t frame an HTTP page.
             </li>
             <li>
-              <strong>Load <code>cors.js</code></strong> from <code>universal-editor-service.adobe.io</code>. The old corslib and npm
-              package are deprecated.
+              <strong>Load <code>cors.js</code></strong> from <code>universal-editor-service.adobe.io</code>. The old corslib and
+              npm package are deprecated.
             </li>
             <li>
-              <strong>Connection meta</strong> pointing at the author host. Every URN resolves against it.
+              <strong>Add the connection meta tag</strong> and point it at your author host. Every resource on the page resolves
+              against it.
             </li>
             <li>
-              <strong>Allow framing</strong>: no <code>X-Frame-Options</code> or <code>frame-ancestors</code> that blocks the editor.
+              <strong>Allow framing.</strong> Make sure no <code>X-Frame-Options</code> or <code>frame-ancestors</code> header
+              blocks the editor.
             </li>
             <li>
-              <strong>Author trusts the app</strong>: CORS for the app origin with credentials, and the login-token cookie set to{" "}
-              <code>Partitioned</code>.
+              <strong>Have author trust your app.</strong> Allow your app&apos;s origin in CORS with credentials, and set the
+              login-token cookie to <code>Partitioned</code>.
             </li>
             <li>
-              <strong>Render attributes on the server</strong> so they are in the first HTML the editor sees.
+              <strong>Render the attributes on the server</strong> so they&apos;re in the first HTML the editor sees.
             </li>
           </ul>
         </div>
@@ -303,88 +292,86 @@ export const slides: Slide[] = [
   },
   {
     title: "Register a component, 1\u00a0of\u00a03: what can be added",
-    lede: "public/component-definition.json. The editor loads it, and the next two files, from <script> tags in the head.",
+    lede: "component-definition.json. The editor loads it, and the next two files, from <script> tags in the head.",
     body: (
       <div className={`${s.cols} ${s.colsWide}`}>
         <div className={s.col}>
           <ul className={s.list}>
             <li>
-              <strong>The menu of building blocks.</strong> Each entry is a section an author can add to a page with the
-              editor&apos;s <em>Add</em> button.
+              <strong>Think of it as the menu of building blocks.</strong> Each entry is a section an author can add to a page
+              with the editor&apos;s <em>Add</em> button.
             </li>
             <li>
-              <strong><code>id</code></strong> is the component&apos;s name. Filters list these names;{" "}
+              <strong><code>id</code></strong> is the component&apos;s name, and filters refer to it.{" "}
               <strong><code>model</code></strong> points to its form in the properties panel.
             </li>
             <li>
-              <strong><code>cfModel</code></strong> says which Content Fragment Model a new section is built from.
+              <strong><code>cfModel</code></strong> tells the editor which Content Fragment Model to build a new section from.
             </li>
             <li>
-              <strong><code>cfFolder</code></strong> says where in Assets the new fragment is saved.
+              <strong><code>cfFolder</code></strong> tells it where in Assets to save the new fragment.
             </li>
           </ul>
         </div>
-        <Code caption="public/component-definition.json" lang="json" code={DEFINITION} hl={[2, 5, 6]} />
+        <Code caption="component-definition.json" lang="json" code={DEFINITION} hl={[2, 5, 6]} />
       </div>
     ),
   },
   {
     title: "Register a component, 2\u00a0of\u00a03: the properties panel",
-    lede: "public/component-models.json. The form an author sees on the right when they select a section.",
+    lede: "component-models.json. This is the form an author sees on the right when they select a section.",
     body: (
       <div className={`${s.cols} ${s.colsWide}`}>
         <div className={s.col}>
           <ul className={s.list}>
             <li>
-              <strong>One form per model.</strong> <code>id</code> matches the <code>model</code> named in the definition.
+              <strong>You get one form per model.</strong> Its <code>id</code> matches the <code>model</code> in the definition.
             </li>
             <li>
               <strong>Each field is one input.</strong> <code>component</code> is the kind of input (text box, dropdown),{" "}
               <code>name</code> is the fragment field it saves to, and <code>label</code> is what the author reads.
             </li>
             <li>
-              <strong>Dropdowns limit the choices</strong> to a fixed list of values, so an author can&apos;t enter one the
-              component doesn&apos;t support.
+              <strong>Use dropdowns to limit the choices</strong> to values your component actually supports.
             </li>
             <li>
-              <strong>A form is optional for fragments.</strong> Without one, the panel shows the Content Fragment Model&apos;s
-              fields. Add one when you need a custom input such as a dropdown; it replaces those fields, so list every field
-              authors should edit.
+              <strong>For fragments, the form is optional.</strong> Leave it out and the panel shows the Content Fragment
+              Model&apos;s fields. Add one when you need a custom input like a dropdown. It replaces those fields, so list every
+              field you want authors to edit.
             </li>
           </ul>
         </div>
-        <Code caption="public/component-models.json" lang="json" code={MODEL} hl={[2, 4, 6]} />
+        <Code caption="component-models.json" lang="json" code={MODEL} hl={[2, 4, 6]} />
       </div>
     ),
   },
   {
     title: "Register a component, 3\u00a0of\u00a03: what goes where",
-    lede: "public/component-filters.json. The rules for which sections each list on the page accepts.",
+    lede: "component-filters.json. These are the rules for which sections each list on the page accepts.",
     body: (
       <div className={`${s.cols} ${s.colsWide}`}>
         <div className={s.col}>
           <ul className={s.list}>
             <li>
-              <strong>A container is a list authors can add to and reorder</strong>, like the sections of a page or the cards in
-              a list.
+              <strong>A container is a list authors can add to and reorder</strong>, like the sections on a page or the cards
+              in a hero.
             </li>
             <li>
-              <strong>Each filter is a named allow-list.</strong> The page points a container at one with{" "}
-              <code>data-aue-filter</code>.
+              <strong>Each filter is a named allow-list.</strong> You point a container at one with <code>data-aue-filter</code>.
             </li>
             <li>
-              <strong>List the component ids a container may hold.</strong> Anything else is left out of its <em>Add</em> menu.
+              <strong>List the component ids a container can hold.</strong> Anything else stays out of its <em>Add</em> menu.
             </li>
             <li>
-              <strong>Give each container its own filter</strong>: one for a page&apos;s sections, another for the items inside a
+              <strong>Give each container its own filter</strong>: one for the page&apos;s sections, another for the items inside a
               section.
             </li>
             <li>
-              <strong>Ids tie the three files together</strong>: filter → component → model.
+              <strong>The ids tie the three files together</strong>: filter → component → model.
             </li>
           </ul>
         </div>
-        <Code caption="public/component-filters.json" lang="json" code={FILTERS} hl={[2, 5]} />
+        <Code caption="component-filters.json" lang="json" code={FILTERS} hl={[2, 4]} />
       </div>
     ),
   },
@@ -392,22 +379,23 @@ export const slides: Slide[] = [
     title: "Ask AEM for exactly what the page renders",
     body: (
       <div className={s.cols}>
-        <Code caption="aem/screen-by-path.graphql, persisted as wknd-bank/screen-by-path" lang="graphql" code={QUERY} hl={[4, 8, 14]} />
+        <Code caption="page-by-path.graphql, persisted as my-site/page-by-path" lang="graphql" code={QUERY} hl={[4, 8, 13]} />
         <div className={s.col}>
           <ul className={s.list}>
             <li>
-              <strong>Persisted queries are plain GETs</strong>, so the CDN and Dispatcher can cache them. No GraphQL client in the app.
+              <strong>Use persisted queries.</strong> They&apos;re plain GETs, so the CDN and Dispatcher can cache them, and you
+              don&apos;t need a GraphQL client in the app.
             </li>
             <li>
-              <strong>Every fragment returns <code>_path</code>, <code>_variation</code> and <code>_model</code>.</strong> The path
-              and variation build the editor URN. The model title picks the React component.
+              <strong>Return <code>_path</code>, <code>_variation</code> and <code>_model</code> on every fragment.</strong> The
+              path and variation build the editor URN, and the model title picks the React component.
             </li>
             <li>
-              <strong>One query per page type.</strong> The Screen fragment pulls in its sections, their rates and the disclosures in a
-              single round trip.
+              <strong>Write one query per page type.</strong> The page fragment pulls in its sections and everything they
+              reference in a single round trip.
             </li>
           </ul>
-          <Code caption="lib/aem.ts" code={QUERY_URL} hl={[2, 3]} />
+          <Code caption="Building the query URL" code={QUERY_URL} hl={[2, 3]} />
         </div>
       </div>
     ),
@@ -417,21 +405,22 @@ export const slides: Slide[] = [
     body: (
       <div className={s.cols}>
         <div className={s.col}>
-          <Code caption="components/ModelManager.tsx" code={MODEL_MANAGER} hl={[2, 11, 13]} />
+          <Code caption="ModelManager.tsx" code={MODEL_MANAGER} hl={[2, 5, 6]} />
         </div>
         <div className={s.col}>
-          <Code caption="components/ScreenView.tsx" code={SCREEN_MAP} hl={[3, 6]} />
+          <Code caption="Rendering the page" code={PAGE_MAP} hl={[3, 4, 6]} />
           <ul className={s.list}>
             <li>
-              The <code>Bank Hero</code> model becomes <code>&lt;BankHero&gt;</code>. The query&apos;s <code>... on BankHeroModel</code>{" "}
-              gives it typed fields.
+              The <code>Hero</code> model becomes <code>&lt;Hero&gt;</code>, and the query&apos;s{" "}
+              <code>... on HeroModel</code> gives it typed fields.
             </li>
             <li>
-              <strong>Adding a section type</strong> takes one model, one component, one line in the mapping and one fragment in the
-              query.
+              <strong>To add a section type</strong>, you need one model, one component, one line in the mapping and one fragment
+              in the query.
             </li>
             <li>
-              The <code>block</code> field is a container, so authors add, remove and reorder sections in Universal Editor.
+              Make the <code>sections</code> field a container, and authors can add, remove and reorder sections in Universal
+              Editor.
             </li>
           </ul>
         </div>
@@ -440,7 +429,7 @@ export const slides: Slide[] = [
   },
   {
     id: "models",
-    title: "Nine content models",
+    title: "Example: the WKND Bank content model",
     body: (
       <>
         <ModelGraph />
@@ -449,7 +438,7 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "Home page fragments",
+    title: "Example: the WKND Bank home page",
     body: (
       <>
         <FragmentTree />
@@ -458,13 +447,13 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "Where the fragments live",
-    lede: "Pages and their sections live in home/. Rates, products and compliance's disclosures sit in their own folders so every page can share them.",
+    title: "Organize fragments by who owns them",
+    lede: "Keep a page and its sections together. Give shared content its own folder so every page can reference it.",
     body: (
       <div className={`${s.cols} ${s.colsWide}`}>
         <div className={s.col}>
           <p className={s.small}>
-            <code>/content/dam/wknd-bank/site/en</code>
+            Example: <code>/content/dam/wknd-bank/site/en</code>
           </p>
           <ul className={s.tree}>
             {[
@@ -487,21 +476,23 @@ export const slides: Slide[] = [
         <div className={s.col}>
           <ul className={s.list}>
             <li>
-              <strong>One source of truth.</strong> Models, folders and sample content are declared in <code>aem/demo.spec.json</code>.{" "}
-              <code>npm run aem:gen</code> writes the query, the mock and the editor JSON from it.
+              <strong>Put a page and its sections in one folder.</strong> They get created and edited together.
             </li>
             <li>
-              <strong>Each folder lists the models it holds.</strong> <code>npm run aem:check</code> fails if a fragment sits in the
-              wrong folder, and each component definition&apos;s <code>cfFolder</code> decides where a fragment added in Universal Editor
-              is created.
+              <strong>Store shared content once.</strong> If more than one page uses it, give it its own folder and reference it.
+              Don&apos;t copy it.
             </li>
             <li>
-              <strong>Typed fields stay typed.</strong> <code>rate</code> is a number, <code>effectiveDate</code> a date, and{" "}
-              <code>status</code> an enumeration. They are edited in the properties panel, never inline.
+              <strong>Limit each folder to the models it should hold</strong> with the folder&apos;s allowed Content Fragment
+              Models policy.
             </li>
             <li>
-              <strong>Placeholders until compliance signs off.</strong> A Rate with <code>status: sample</code> shows a
-              &ldquo;Sample rate&rdquo; label.
+              <strong>Set <code>cfFolder</code> on each component definition</strong> so fragments added in Universal Editor land
+              in the right place.
+            </li>
+            <li>
+              <strong>Keep typed fields typed.</strong> Numbers, dates and enumerations belong in the properties panel, not
+              inline on the page.
             </li>
           </ul>
         </div>
@@ -509,8 +500,8 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "The whole content model, mapped",
-    lede: "Each Content Fragment model has one GraphQL type and one React home. Containers name the filter that limits what goes in them.",
+    title: "Map every model before you write code",
+    lede: "Each Content Fragment Model gets one GraphQL type and one React component. Each list of references gets a filter.",
     body: (
       <table className={s.table}>
         <thead>
@@ -523,15 +514,11 @@ export const slides: Slide[] = [
         </thead>
         <tbody>
           {[
-            ["Screen", "screenByPath (root)", "ScreenView (<main>)", "block → screen-block · disclosures → screen-disclosures"],
-            ["Bank Hero", "BankHeroModel", "BankHero", "rates → bank-hero-rates"],
-            ["Rates Table", "RatesTableModel", "RatesTable", "rates → rates-table-rates"],
-            ["Product List", "ProductListModel", "ProductList", "items → product-list-items"],
-            ["Product Line", "ProductLineModel", "item inside ProductList", "—"],
-            ["Feature Split", "FeatureSplitModel", "FeatureSplit", "—"],
-            ["CTA Band", "CtaBandModel", "CtaBand", "—"],
-            ["Rate", "RateModel", "row in BankHero and RatesTable (RateFigure)", "—"],
-            ["Disclosure", "DisclosureModel", "SiteFooter legal copy", "—"],
+            ["Page", "pageByPath (root)", "<main>", "sections → page-sections"],
+            ["Hero", "HeroModel", "Hero", "cards → hero-cards"],
+            ["Card List", "CardListModel", "CardList", "cards → card-list-cards"],
+            ["Card", "CardModel", "item inside Hero and CardList", "—"],
+            ["CTA", "CtaModel", "Cta", "—"],
           ].map((row) => (
             <tr key={row[0]}>
               {row.map((cell, i) => (
@@ -545,7 +532,7 @@ export const slides: Slide[] = [
   },
   {
     title: "Tag a component for Universal Editor",
-    lede: "Add data-aue-* attributes to the markup you already render. No library, no SDK.",
+    lede: "Add data-aue-* attributes to the markup you already render. You don't need a library or an SDK.",
     body: (
       <div className={`${s.cols} ${s.colsWide}`}>
         <div className={s.col}>
@@ -556,42 +543,42 @@ export const slides: Slide[] = [
               <code>data-aue-type=&quot;reference&quot;</code> and a label.
             </li>
             <li>
-              <strong>2. Mark each editable field.</strong> <code>data-aue-prop</code> names the fragment field;{" "}
+              <strong>2. Mark each editable field.</strong> <code>data-aue-prop</code> names the fragment field, and{" "}
               <code>data-aue-type</code> is <code>text</code>, <code>richtext</code> or <code>media</code>. A field belongs to
               the nearest fragment above it.
             </li>
             <li>
-              <strong>3. Mark lists of fragments.</strong> The wrapper is a <code>container</code> with a filter; each item is
+              <strong>3. Mark lists of fragments.</strong> The wrapper is a <code>container</code> with a filter, and each item is
               its own fragment.
             </li>
             <li>
-              <strong>4. Ask for the path.</strong> Your query must return each fragment&apos;s <code>_path</code>, or you
+              <strong>4. Ask for the path.</strong> Your query has to return each fragment&apos;s <code>_path</code>, or you
               can&apos;t build the URN.
             </li>
           </ul>
         </div>
-        <Code caption="Hero.tsx (example)" code={TAGGED} hl={[4, 5, 6, 7, 9, 12, 14, 15, 16]} />
+        <Code caption="Hero.tsx" code={TAGGED} hl={[4, 5, 6, 7, 9, 12, 14, 15, 16]} />
       </div>
     ),
   },
   {
-    title: "What Universal Editor reads from the DOM",
+    title: "What Universal Editor reads from the page",
     body: (
       <div className={s.cols}>
-        <Code caption="Server-rendered HTML for the hero" lang="html" code={RENDERED} />
+        <Code caption="The server-rendered hero" lang="html" code={RENDERED} />
         <table className={s.table}>
           <thead>
             <tr>
               <th scope="col">Attribute</th>
-              <th scope="col">Tells the editor</th>
+              <th scope="col">What it tells the editor</th>
             </tr>
           </thead>
           <tbody>
             {[
               ["data-aue-resource", "Which fragment and variation: connection + path + /jcr:content/data/master"],
               ["data-aue-type", "reference, container, text, richtext, media or component"],
-              ["data-aue-prop", "The field inside the nearest resource"],
-              ["data-aue-model", "Which model drives the properties rail; wins over the definition"],
+              ["data-aue-prop", "Which field inside the nearest resource"],
+              ["data-aue-model", "Which form to show in the properties panel. It wins over the definition"],
               ["data-aue-filter", "Which components a container accepts"],
               ["data-aue-label", "The name in the content tree"],
             ].map(([a, b]) => (
@@ -604,7 +591,7 @@ export const slides: Slide[] = [
             ))}
             <tr>
               <td>Limit</td>
-              <td>Adobe advises no more than 25 AEM resources instrumented on one page.</td>
+              <td>Adobe recommends no more than 25 AEM resources instrumented on one page.</td>
             </tr>
           </tbody>
         </table>
@@ -612,31 +599,31 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "Server first, author only inside the editor",
-    lede: "Visitors never wait on author, and authors always see drafts. A badge on the page says which source rendered it.",
+    title: "Read publish on the server, author only inside the editor",
+    lede: "Visitors never wait on author, and authors always see their drafts.",
     body: (
       <div className={s.cols}>
-        <Code caption="Published content on the server" code={LOAD_SCREEN} hl={[3, 4, 7]} />
-        <Code caption="Draft content in the editor" code={SCREEN_VIEW} hl={[3, 6, 15]} />
+        <Code caption="Published content on the server" code={LOAD_PAGE} hl={[3, 4, 8]} />
+        <Code caption="Draft content in the editor" code={EDITOR_READ} hl={[2, 6, 8, 9]} />
       </div>
     ),
   },
   {
-    title: "Designing a page, and where responsive behaviour lives",
+    title: "Building a page, and where responsive behavior lives",
     body: (
       <div className={s.cols}>
         <div className={s.col}>
           <h2>Composing in Universal Editor</h2>
           <ol className={s.steps}>
-            <li>Open the page. The content tree shows the Screen and its Sections container.</li>
+            <li>Open the page. The content tree shows the page fragment and its sections container.</li>
             <li>
-              Add a section. The <code>screen-block</code> filter offers only the five section types. The new fragment is created in
-              the definition&apos;s <code>cfFolder</code>.
+              Add a section. The container&apos;s filter decides what&apos;s offered, and the new fragment is created in the
+              definition&apos;s <code>cfFolder</code>.
             </li>
-            <li>Drag sections to reorder them, and edit text directly on the page.</li>
+            <li>Drag sections to reorder them, and edit text right on the page.</li>
             <li>
-              Pick a design variant in the properties rail. <code>layout: split | stacked</code> is an ordinary field, so it comes back
-              in the JSON.
+              Pick a design variant in the properties panel. A field like <code>layout: split | stacked</code> is just data, so it
+              comes back in the query.
             </li>
           </ol>
         </div>
@@ -644,8 +631,8 @@ export const slides: Slide[] = [
           <h2>Responsive is app code</h2>
           <Code caption="The layout field maps to classes, and CSS owns the breakpoints" lang="css" code={RESPONSIVE} />
           <p className={s.note}>
-            Universal Editor previews device widths but has <strong>no responsive layout grid</strong>, unlike the classic Page
-            Editor. Authors pick a variant; developers own the breakpoints.
+            Universal Editor previews device widths, but unlike the classic Page Editor it has{" "}
+            <strong>no responsive layout grid</strong>. Authors pick a variant, and developers own the breakpoints.
           </p>
         </div>
       </div>
