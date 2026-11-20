@@ -363,9 +363,6 @@ export const slides: Slide[] = [
             <li>
               <strong><code>cfFolder</code></strong> says where in Assets the new fragment is saved.
             </li>
-            <li>
-              Generated from <code>aem/demo.spec.json</code> by <code>npm run aem:gen</code>. Don&apos;t edit it by hand.
-            </li>
           </ul>
         </div>
         <Code caption="public/component-definition.json" lang="json" code={DEFINITION} hl={[2, 5, 6]} />
@@ -387,12 +384,13 @@ export const slides: Slide[] = [
               <code>name</code> is the fragment field it saves to, and <code>label</code> is what the author reads.
             </li>
             <li>
-              <strong>Dropdowns limit the choices</strong>, so <code>layout</code> can only be <code>split</code> or{" "}
-              <code>stacked</code>, never a typo.
+              <strong>Dropdowns limit the choices</strong> to a fixed list of values, so an author can&apos;t enter one the
+              component doesn&apos;t support.
             </li>
             <li>
-              <strong>Only four models need a form</strong>: Bank Hero, Rate, Feature Split and Cta Band, the ones with
-              dropdowns. The rest use the Content Fragment Model in AEM as-is.
+              <strong>A form is optional for fragments.</strong> Without one, the panel shows the Content Fragment Model&apos;s
+              fields. Add one when you need a custom input such as a dropdown; it replaces those fields, so list every field
+              authors should edit.
             </li>
           </ul>
         </div>
@@ -408,18 +406,19 @@ export const slides: Slide[] = [
         <div className={s.col}>
           <ul className={s.list}>
             <li>
-              <strong>A container is a list authors can add to and reorder</strong>, like the sections of a page or the rates in
-              a hero.
+              <strong>A container is a list authors can add to and reorder</strong>, like the sections of a page or the cards in
+              a list.
             </li>
             <li>
               <strong>Each filter is a named allow-list.</strong> The page points a container at one with{" "}
               <code>data-aue-filter</code>.
             </li>
             <li>
-              <strong><code>screen-block</code></strong> lets a page hold the five section types and nothing else.
+              <strong>List the component ids a container may hold.</strong> Anything else is left out of its <em>Add</em> menu.
             </li>
             <li>
-              <strong><code>bank-hero-rates</code></strong> lets a hero hold only Rate fragments.
+              <strong>Give each container its own filter</strong>: one for a page&apos;s sections, another for the items inside a
+              section.
             </li>
             <li>
               <strong>Ids tie the three files together</strong>: filter → component → model.
