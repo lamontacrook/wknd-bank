@@ -1,4 +1,7 @@
+import Link from "next/link";
 import s from "./deck.module.css";
+import type { ReactNode } from "react";
+import { modelById, modelHref, modelPath, referrers, type Field, type Model } from "./models";
 
 type Line = { text: string; enum?: boolean };
 
@@ -19,9 +22,19 @@ function Markers() {
   );
 }
 
-function ModelBox({ x, y, w, title, lines, root }: { x: number; y: number; w: number; title: string; lines: Line[]; root?: boolean }) {
+/** Wraps an SVG group in a link to that model's detail slide. */
+function ModelLink({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <Link href={modelHref(id)} className={s.cmLink} aria-label={`${modelById(id)?.title} model: fields and AEM link`}>
+      {children}
+    </Link>
+  );
+}
+
+function ModelBox({ id, x, y, w, title, lines, root }: { id: string; x: number; y: number; w: number; title: string; lines: Line[]; root?: boolean }) {
   const h = 46 + lines.length * ROW;
   return (
+    <ModelLink id={id}>
     <g transform={`translate(${x} ${y})`}>
       <rect width={w} height={h} rx="10" className={root ? s.cmRoot : s.cmBox} />
       <text x="16" y="30" className={s.cmTitle}>
@@ -36,6 +49,7 @@ function ModelBox({ x, y, w, title, lines, root }: { x: number; y: number; w: nu
         </g>
       ))}
     </g>
+    </ModelLink>
   );
 }
 
@@ -49,12 +63,12 @@ function Label({ x, y, children, anchor = "start" }: { x: number; y: number; chi
 
 /** The nine Content Fragment models and the reference fields that join them. */
 export function ModelGraph() {
-  const sections: { title: string; lines: Line[] }[] = [
-    { title: "Bank Hero", lines: [{ text: "headline · subHeadline · ratesTitle" }, { text: "primary + secondary CTA" }, { text: "layout: split | stacked", enum: true }] },
-    { title: "Rates Table", lines: [{ text: "title" }, { text: "linkText · linkUrl" }] },
-    { title: "Product List", lines: [{ text: "title" }, { text: "anchor (pattern-checked)" }] },
-    { title: "Feature Split", lines: [{ text: "headline · body · image · imageAlt" }, { text: "mediaPosition · mobileOrder", enum: true }, { text: "background: mist | paper", enum: true }] },
-    { title: "Cta Band", lines: [{ text: "headline · ctaText · ctaLink" }, { text: "tone: spruce | ink", enum: true }] },
+  const sections: { id: string; title: string; lines: Line[] }[] = [
+    { id: "bank-hero", title: "Bank Hero", lines: [{ text: "headline · subHeadline · ratesTitle" }, { text: "primary + secondary CTA" }, { text: "layout: split | stacked", enum: true }] },
+    { id: "rates-table", title: "Rates Table", lines: [{ text: "title" }, { text: "linkText · linkUrl" }] },
+    { id: "product-list", title: "Product List", lines: [{ text: "title" }, { text: "anchor (pattern-checked)" }] },
+    { id: "feature-split", title: "Feature Split", lines: [{ text: "headline · body · image · imageAlt" }, { text: "mediaPosition · mobileOrder", enum: true }, { text: "background: mist | paper", enum: true }] },
+    { id: "cta-band", title: "Cta Band", lines: [{ text: "headline · ctaText · ctaLink" }, { text: "tone: spruce | ink", enum: true }] },
   ];
   const heights = sections.map((m) => 46 + m.lines.length * ROW);
   const tops = heights.map((_, i) => 10 + heights.slice(0, i).reduce((a, h) => a + h + 14, 0));
@@ -72,13 +86,14 @@ export function ModelGraph() {
       </desc>
       <Markers />
 
-      <ModelBox x={20} y={screenY} w={270} root title="Screen" lines={[{ text: "title" }, { text: "block → 5 section types" }, { text: "disclosures → Disclosure" }]} />
+      <ModelBox id="screen" x={20} y={screenY} w={270} root title="Screen" lines={[{ text: "title" }, { text: "block → 5 section types" }, { text: "disclosures → Disclosure" }]} />
 
       {sections.map((m, i) => (
-        <ModelBox key={m.title} x={400} y={tops[i]} w={350} title={m.title} lines={m.lines} />
+        <ModelBox key={m.id} id={m.id} x={400} y={tops[i]} w={350} title={m.title} lines={m.lines} />
       ))}
 
       <ModelBox
+        id="rate"
         x={860}
         y={40}
         w={300}
@@ -92,8 +107,8 @@ export function ModelGraph() {
           { text: "ctaText · ctaLink" },
         ]}
       />
-      <ModelBox x={860} y={centers[2] - (46 + 2 * ROW) / 2} w={300} title="Product Line" lines={[{ text: "name · summary" }, { text: "ctaText · ctaLink" }]} />
-      <ModelBox x={1190} y={440} w={190} title="Disclosure" lines={[{ text: "title" }, { text: "body (multiline)" }]} />
+      <ModelBox id="product-line" x={860} y={centers[2] - (46 + 2 * ROW) / 2} w={300} title="Product Line" lines={[{ text: "name · summary" }, { text: "ctaText · ctaLink" }]} />
+      <ModelBox id="disclosure" x={1190} y={440} w={190} title="Disclosure" lines={[{ text: "title" }, { text: "body (multiline)" }]} />
 
       {/* Screen.block → sections */}
       <path d={`M290 ${centers[2]} H345`} className={s.cmEdge} />
@@ -212,7 +227,7 @@ export function FragmentTree() {
   );
 }
 
-export function ModelLegend({ enums = false, reused = false }: { enums?: boolean; reused?: boolean }) {
+export function ModelLegend({ enums = false, reused = false, clickable = false }: { enums?: boolean; reused?: boolean; clickable?: boolean }) {
   return (
     <p className={s.legend}>
       <span>
@@ -231,6 +246,162 @@ export function ModelLegend({ enums = false, reused = false }: { enums?: boolean
           <i className={s.cmKeyReused} /> Fragment reused in more than one place
         </span>
       )}
+      {clickable && <span className={s.legendHint}>Click a model for its fields and a link to it in AEM</span>}
     </p>
   );
 }
+
+const TYPE_LABEL: Record<Field["type"], string> = {
+  text: "text",
+  multiline: "rich text",
+  number: "number",
+  date: "date",
+  enum: "enum",
+  image: "image",
+  fragment: "fragment",
+  fragments: "fragment [ ]",
+};
+
+function fieldDetail(f: Field) {
+  if (f.options) return f.options.map(([value]) => value).join(" | ");
+  if (f.models) return `→ ${f.models.length > 1 ? `${f.models.length} section models` : modelById(f.models[0])?.title}`;
+  if (f.pattern) return "pattern-checked";
+  if (f.maxLength) return `max ${f.maxLength} chars`;
+  if (f.min !== undefined) return `min ${f.min}`;
+  return "";
+}
+
+const D = { W: 1400, H: 540, HEAD: 78, ROW: 40, BOX_X: 350, BOX_W: 640, SIDE_W: 250, SIDE_H: 64, GAP: 12 };
+
+function SideBox({ id, x, y, sub }: { id: string; x: number; y: number; sub: string }) {
+  return (
+    <ModelLink id={id}>
+      <g transform={`translate(${x} ${y})`}>
+        <rect width={D.SIDE_W} height={D.SIDE_H} rx="10" className={s.cmBox} />
+        <text x="16" y="28" className={s.cmTitle}>
+          {modelById(id)?.title}
+        </text>
+        <text x="16" y="51" className={s.cmText}>
+          {sub}
+        </text>
+      </g>
+    </ModelLink>
+  );
+}
+
+/** Stacks n side boxes around a centre line, kept inside the viewBox. */
+function stack(n: number, centre: number) {
+  const total = n * D.SIDE_H + (n - 1) * D.GAP;
+  const top = Math.min(Math.max(centre - total / 2, 10), D.H - total - 10);
+  return Array.from({ length: n }, (_, i) => top + i * (D.SIDE_H + D.GAP));
+}
+
+function Note({ x, y, lines }: { x: number; y: number; lines: string[] }) {
+  return (
+    <text x={x} y={y} className={s.cmNote}>
+      {lines.map((l, i) => (
+        <tspan key={l} x={x} dy={i ? 24 : 0}>
+          {l}
+        </tspan>
+      ))}
+    </text>
+  );
+}
+
+/** One model: every field with its type and constraints, what references it, and what it references. */
+export function ModelDetail({ model }: { model: Model }) {
+  const boxH = D.HEAD + model.fields.length * D.ROW + 8;
+  const boxY = (D.H - boxH) / 2;
+  const rowY = (i: number) => boxY + D.HEAD + i * D.ROW + D.ROW / 2;
+  const headY = boxY + D.HEAD / 2;
+
+  const incoming = referrers(model.id);
+  const inY = stack(incoming.length, headY);
+
+  const refs = model.fields.flatMap((f, i) => (f.models ?? []).map((id) => ({ id, field: f, row: i })));
+  const refRows = refs.map((r) => rowY(r.row));
+  const outY = stack(refs.length, refRows.length ? (Math.min(...refRows) + Math.max(...refRows)) / 2 : 0);
+  const outX = D.W - 20 - D.SIDE_W;
+  const footer = (m: Model, f: Field) => m.id === "screen" && f.name === "disclosures";
+
+  return (
+    <svg className={s.diagram} viewBox={`0 0 ${D.W} ${D.H}`} role="img" aria-labelledby="md-t md-d">
+      <title id="md-t">{`${model.title} Content Fragment model`}</title>
+      <desc id="md-d">
+        {`${model.title} has ${model.fields.length} fields: ${model.fields.map((f) => `${f.name} (${TYPE_LABEL[f.type]}${f.required ? ", required" : ""})`).join(", ")}. `}
+        {incoming.length ? `Referenced by ${incoming.map((r) => `${r.model.title}.${r.field.name}`).join(" and ")}. ` : "Nothing references it. "}
+        {refs.length ? `References ${refs.map((r) => modelById(r.id)?.title).join(", ")}.` : "It references no other fragments."}
+      </desc>
+      <Markers />
+
+      {incoming.length ? (
+        incoming.map((r, i) => (
+          <g key={`${r.model.id}.${r.field.name}`}>
+            <SideBox id={r.model.id} x={20} y={inY[i]} sub={`via ${r.field.name}${r.field.type === "fragments" ? " [ ]" : ""}`} />
+            <path
+              d={curve(20 + D.SIDE_W, inY[i] + D.SIDE_H / 2, D.BOX_X - 4, headY)}
+              className={footer(r.model, r.field) ? s.cmEdgeDash : s.cmEdge}
+              markerEnd={footer(r.model, r.field) ? "url(#cm-a-ink)" : "url(#cm-a)"}
+            />
+          </g>
+        ))
+      ) : (
+        <Note x={20} y={headY - 12} lines={["The root. The persisted", "query starts here."]} />
+      )}
+
+      <g transform={`translate(${D.BOX_X} ${boxY})`}>
+        <rect width={D.BOX_W} height={boxH} rx="12" className={s.cmBox} />
+        <g>
+          <rect width={D.BOX_W} height={D.HEAD} rx="12" className={s.cmRoot} />
+          <rect y={D.HEAD - 14} width={D.BOX_W} height="14" className={s.cmRoot} />
+          <text x="24" y="34" className={s.cmHeadTitle}>
+            {model.title}
+          </text>
+          <text x={D.BOX_W - 24} y="34" textAnchor="end" className={s.cmHeadMeta}>
+            {`fragments in ${model.folder}/`}
+          </text>
+          <text x="24" y="60" className={s.cmHeadMeta}>
+            {modelPath(model.id)}
+          </text>
+        </g>
+        {model.fields.map((f, i) => {
+          const y = D.HEAD + i * D.ROW;
+          const detail = fieldDetail(f);
+          return (
+            <g key={f.name} transform={`translate(0 ${y})`}>
+              <title>{`${f.label}${f.description ? `: ${f.description}` : ""}`}</title>
+              {i > 0 && <path d={`M16 0 H${D.BOX_W - 16}`} className={s.cmRule} />}
+              <text x="24" y="26" className={s.cmField}>
+                {f.name}
+              </text>
+              <rect x="236" y="7" width="126" height="26" rx="13" className={f.type === "enum" ? s.cmChipEnum : s.cmChip} />
+              <text x="299" y="25" textAnchor="middle" className={s.cmChipText}>
+                {TYPE_LABEL[f.type]}
+              </text>
+              <text x="382" y="26" className={s.cmText}>
+                {f.required && <tspan className={s.cmReq}>{`required${detail ? " · " : ""}`}</tspan>}
+                {detail}
+              </text>
+            </g>
+          );
+        })}
+      </g>
+
+      {refs.length ? (
+        refs.map((r, i) => (
+          <g key={`${r.field.name}.${r.id}`}>
+            <path
+              d={curve(D.BOX_X + D.BOX_W, refRows[i], outX - 4, outY[i] + D.SIDE_H / 2)}
+              className={footer(model, r.field) ? s.cmEdgeDash : s.cmEdge}
+              markerEnd={footer(model, r.field) ? "url(#cm-a-ink)" : "url(#cm-a)"}
+            />
+            <SideBox id={r.id} x={outX} y={outY[i]} sub={`fragments in ${modelById(r.id)?.folder}/`} />
+          </g>
+        ))
+      ) : (
+        <Note x={outX + 20} y={headY - 12} lines={["A leaf: no fragment", "references."]} />
+      )}
+    </svg>
+  );
+}
+
