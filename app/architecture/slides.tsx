@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Code } from "./_deck/Code";
+import { FragmentTree, ModelGraph, ModelLegend } from "./_deck/ContentModel";
 import { ArchitectureDiagram, DiagramLegend } from "./_deck/Diagram";
 import s from "./_deck/deck.module.css";
 
@@ -399,6 +400,75 @@ export const slides: Slide[] = [
             </li>
             <li>
               The <code>block</code> field is a container, so authors add, remove and reorder sections in Universal Editor.
+            </li>
+          </ul>
+        </div>
+      </div>
+    ),
+  },
+  {
+    title: "Nine content models",
+    body: (
+      <>
+        <ModelGraph />
+        <ModelLegend enums />
+      </>
+    ),
+  },
+  {
+    title: "Home page fragments",
+    body: (
+      <>
+        <FragmentTree />
+        <ModelLegend reused />
+      </>
+    ),
+  },
+  {
+    title: "Where the fragments live",
+    lede: "Pages and their sections live in home/. Rates, products and compliance's disclosures sit in their own folders so every page can share them.",
+    body: (
+      <div className={`${s.cols} ${s.colsWide}`}>
+        <div className={s.col}>
+          <p className={s.small}>
+            <code>/content/dam/wknd-bank/site/en</code>
+          </p>
+          <ul className={s.tree}>
+            {[
+              ["home/", ["Screen", "Bank Hero", "Rates Table", "Product List", "Feature Split", "Cta Band"]],
+              ["rates/", ["Rate"]],
+              ["products/", ["Product Line"]],
+              ["disclosures/", ["Disclosure"]],
+            ].map(([folder, models]) => (
+              <li key={folder as string}>
+                <code>{folder}</code>
+                <span className={s.chips}>
+                  {(models as string[]).map((m) => (
+                    <span key={m}>{m}</span>
+                  ))}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className={s.col}>
+          <ul className={s.list}>
+            <li>
+              <strong>One source of truth.</strong> Models, folders and sample content are declared in <code>aem/demo.spec.json</code>.{" "}
+              <code>npm run aem:gen</code> writes the query, the mock and the editor JSON from it.
+            </li>
+            <li>
+              <strong>Each folder lists the models it holds.</strong> <code>npm run aem:check</code> fails if a fragment sits in the
+              wrong folder, and each component definition&apos;s <code>cfFolder</code> decides where a fragment added in Universal Editor
+              is created.
+            </li>
+            <li>
+              <strong>Typed fields stay typed.</strong> <code>rate</code> is a number, <code>effectiveDate</code> a date, and{" "}
+              <code>status</code> an enumeration. They are edited in the properties panel, never inline.
+            </li>
+            <li>
+              <strong>Placeholders until compliance signs off.</strong> A Rate with <code>status: sample</code> shows a
+              &ldquo;Sample rate&rdquo; label.
             </li>
           </ul>
         </div>
