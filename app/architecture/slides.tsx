@@ -120,43 +120,26 @@ const SCREEN_MAP = `
   ))}
 </main>`;
 
-const AUE_HELPERS = `
-export const cfResource = (item) =>
-  \`urn:aemconnection:\${item._path}/jcr:content/data/\${item._variation || "master"}\`;
-
-export const aueFragment = (item, { label, model, filter, type = "reference" } = {}) => ({
-  "data-aue-resource": cfResource(item),
-  "data-aue-type": type,
-  "data-aue-label": label || item._model.title,
-  ...(model && { "data-aue-model": model }),
-  ...(filter && { "data-aue-filter": filter }),
-});
-
-export const aueProp = (prop, type = "text", label = prop) => ({
-  "data-aue-prop": prop, "data-aue-type": type, "data-aue-label": label,
-});
-
-export const aueContainer = (prop, { label, filter } = {}) => ({
-  "data-aue-prop": prop, "data-aue-type": "container",
-  "data-aue-label": label || prop,
-  ...(filter && { "data-aue-filter": filter }),
-});`;
-
-const BANK_HERO = `
-export function BankHero({ content }: { content: BankHeroContent }) {
+const TAGGED = `
+export function Hero({ hero }) {
+  const urn = (f) => \`urn:aemconnection:\${f._path}/jcr:content/data/master\`;
   return (
-    <section className={styles.hero} {...aueFragment(content, { model: "bank-hero" })}>
-      <h1 {...aueProp("headline", "text", "Headline")}>{content.headline}</h1>
-      <p {...aueProp("subHeadline", "text", "Sub-headline")}>{content.subHeadline}</p>
+    <section data-aue-resource={urn(hero)}
+      data-aue-type="reference" data-aue-label="Hero">
+      <h1 data-aue-prop="title" data-aue-type="text">{hero.title}</h1>
+      <div data-aue-prop="body" data-aue-type="richtext"
+        dangerouslySetInnerHTML={{ __html: hero.body.html }} />
+      <img data-aue-prop="image" data-aue-type="media"
+        src={hero.image._publishUrl} alt="" />
 
-      <dl {...aueContainer("rates", { label: "Rates", filter: "bank-hero-rates" })}>
-        {content.rates.map((rate) => (
-          <div key={rate._path} {...aueFragment(rate, { model: "rate" })}>
-            <dt {...aueProp("product")}>{rate.product}</dt>
-            <dd><RateFigure rate={rate} /></dd>
-          </div>
+      <ul data-aue-prop="cards" data-aue-type="container" data-aue-filter="hero-cards">
+        {hero.cards.map((card) => (
+          <li key={card._path} data-aue-resource={urn(card)}
+            data-aue-type="reference" data-aue-label="Card">
+            <h2 data-aue-prop="title" data-aue-type="text">{card.title}</h2>
+          </li>
         ))}
-      </dl>
+      </ul>
     </section>
   );
 }`;
@@ -585,12 +568,33 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "Instrument a component with three helpers",
-    lede: "Existing components keep their markup and styles. They gain attribute spreads, and their data must carry _path and _model.",
+    title: "Tag a component for Universal Editor",
+    lede: "Add data-aue-* attributes to the markup you already render. No library, no SDK.",
     body: (
-      <div className={s.cols}>
-        <Code caption="lib/aue.ts (types trimmed)" code={AUE_HELPERS} hl={[2, 5, 12, 16]} />
-        <Code caption="components/BankHero.tsx (trimmed)" code={BANK_HERO} hl={[3, 4, 5, 7, 9, 10]} />
+      <div className={`${s.cols} ${s.colsWide}`}>
+        <div className={s.col}>
+          <ul className={s.list}>
+            <li>
+              <strong>1. Mark the fragment.</strong> On the element that renders it, set <code>data-aue-resource</code> to{" "}
+              <code>urn:aemconnection:</code> + its path + <code>/jcr:content/data/master</code>, with{" "}
+              <code>data-aue-type=&quot;reference&quot;</code> and a label.
+            </li>
+            <li>
+              <strong>2. Mark each editable field.</strong> <code>data-aue-prop</code> names the fragment field;{" "}
+              <code>data-aue-type</code> is <code>text</code>, <code>richtext</code> or <code>media</code>. A field belongs to
+              the nearest fragment above it.
+            </li>
+            <li>
+              <strong>3. Mark lists of fragments.</strong> The wrapper is a <code>container</code> with a filter; each item is
+              its own fragment.
+            </li>
+            <li>
+              <strong>4. Ask for the path.</strong> Your query must return each fragment&apos;s <code>_path</code>, or you
+              can&apos;t build the URN.
+            </li>
+          </ul>
+        </div>
+        <Code caption="Hero.tsx (example)" code={TAGGED} hl={[4, 5, 6, 7, 9, 12, 14, 15, 16]} />
       </div>
     ),
   },
