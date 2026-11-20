@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { DeckKeys } from "../_deck/DeckKeys";
+import { UeLink } from "../_deck/UeLink";
 import { slides } from "../slides";
 import s from "../_deck/deck.module.css";
 
@@ -51,9 +52,12 @@ async function SlideView({ params }: { params: PageProps<"/architecture/[slide]"
           </>
         )}
         <footer className={s.foot}>
-          <Link className={s.brand} href="/architecture">
-            WKND Bank · Universal Editor on AEM headless
-          </Link>
+          <span className={s.footStart}>
+            <Link className={s.brand} href="/architecture">
+              WKND Bank · Universal Editor on AEM headless
+            </Link>
+            <UeLink />
+          </span>
           <nav className={s.nav} aria-label="Slides">
             <Link className={s.navBtn} href={`/architecture/${index - 1}`} aria-disabled={index === 1} tabIndex={index === 1 ? -1 : undefined} aria-label="Previous slide">
               ←

@@ -199,6 +199,9 @@
 .backLink { color: var(--color-harbor); font-weight: 600; text-decoration: none; }
 .backLink:hover { text-decoration: underline; text-underline-offset: 3px; }
 .footStart { display: flex; align-items: center; gap: calc(var(--u) * 2); }
+.ueLink { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-color: var(--color-brass); text-underline-offset: 3px; }
+.ueLink:hover { text-decoration-thickness: 2px; }
+.ueLink:focus-visible { outline: 3px solid var(--color-brass); outline-offset: 3px; border-radius: 2px; }
 
 .tree { margin: 0; padding: 0; list-style: none; display: grid; gap: calc(var(--u) * 0.7); }
 .tree > li {

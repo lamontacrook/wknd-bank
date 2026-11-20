@@ -343,15 +343,90 @@ export const slides: Slide[] = [
     ),
   },
   {
-    title: "Register a component: three JSON files",
-    lede: "The editor loads them from <script> tags in the head. Ids tie them together: component → model → filter.",
+    title: "Register a component, 1\u00a0of\u00a03: what can be added",
+    lede: "public/component-definition.json. The editor loads it, and the next two files, from <script> tags in the head.",
     body: (
-      <div className={s.cols}>
+      <div className={`${s.cols} ${s.colsWide}`}>
         <div className={s.col}>
-          <Code caption="public/component-definition.json: what can be added, and where its fragment lives" lang="json" code={DEFINITION} hl={[2, 6, 7]} />
-          <Code caption="public/component-filters.json: what each container accepts" lang="json" code={FILTERS} hl={[2]} />
+          <ul className={s.list}>
+            <li>
+              <strong>The menu of building blocks.</strong> Each entry is a section an author can add to a page with the
+              editor&apos;s <em>Add</em> button.
+            </li>
+            <li>
+              <strong><code>id</code></strong> is the component&apos;s name. Filters list these names;{" "}
+              <strong><code>model</code></strong> points to its form in the properties panel.
+            </li>
+            <li>
+              <strong><code>cfModel</code></strong> says which Content Fragment Model a new section is built from.
+            </li>
+            <li>
+              <strong><code>cfFolder</code></strong> says where in Assets the new fragment is saved.
+            </li>
+            <li>
+              Generated from <code>aem/demo.spec.json</code> by <code>npm run aem:gen</code>. Don&apos;t edit it by hand.
+            </li>
+          </ul>
         </div>
-        <Code caption="public/component-models.json: the properties rail" lang="json" code={MODEL} hl={[2]} />
+        <Code caption="public/component-definition.json" lang="json" code={DEFINITION} hl={[2, 5, 6]} />
+      </div>
+    ),
+  },
+  {
+    title: "Register a component, 2\u00a0of\u00a03: the properties panel",
+    lede: "public/component-models.json. The form an author sees on the right when they select a section.",
+    body: (
+      <div className={`${s.cols} ${s.colsWide}`}>
+        <div className={s.col}>
+          <ul className={s.list}>
+            <li>
+              <strong>One form per model.</strong> <code>id</code> matches the <code>model</code> named in the definition.
+            </li>
+            <li>
+              <strong>Each field is one input.</strong> <code>component</code> is the kind of input (text box, dropdown),{" "}
+              <code>name</code> is the fragment field it saves to, and <code>label</code> is what the author reads.
+            </li>
+            <li>
+              <strong>Dropdowns limit the choices</strong>, so <code>layout</code> can only be <code>split</code> or{" "}
+              <code>stacked</code>, never a typo.
+            </li>
+            <li>
+              <strong>Only four models need a form</strong>: Bank Hero, Rate, Feature Split and Cta Band, the ones with
+              dropdowns. The rest use the Content Fragment Model in AEM as-is.
+            </li>
+          </ul>
+        </div>
+        <Code caption="public/component-models.json" lang="json" code={MODEL} hl={[2, 4, 6]} />
+      </div>
+    ),
+  },
+  {
+    title: "Register a component, 3\u00a0of\u00a03: what goes where",
+    lede: "public/component-filters.json. The rules for which sections each list on the page accepts.",
+    body: (
+      <div className={`${s.cols} ${s.colsWide}`}>
+        <div className={s.col}>
+          <ul className={s.list}>
+            <li>
+              <strong>A container is a list authors can add to and reorder</strong>, like the sections of a page or the rates in
+              a hero.
+            </li>
+            <li>
+              <strong>Each filter is a named allow-list.</strong> The page points a container at one with{" "}
+              <code>data-aue-filter</code>.
+            </li>
+            <li>
+              <strong><code>screen-block</code></strong> lets a page hold the five section types and nothing else.
+            </li>
+            <li>
+              <strong><code>bank-hero-rates</code></strong> lets a hero hold only Rate fragments.
+            </li>
+            <li>
+              <strong>Ids tie the three files together</strong>: filter → component → model.
+            </li>
+          </ul>
+        </div>
+        <Code caption="public/component-filters.json" lang="json" code={FILTERS} hl={[2, 5]} />
       </div>
     ),
   },

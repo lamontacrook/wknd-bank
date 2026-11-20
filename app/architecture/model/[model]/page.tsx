@@ -7,6 +7,7 @@ import { ModelKeys } from "../../_deck/ModelKeys";
 import { aemModelUrl, folderPath, modelById, modelHref, models } from "../../_deck/models";
 import { slideNumber } from "../../slides";
 import s from "../../_deck/deck.module.css";
+import { UeLink } from "../../_deck/UeLink";
 
 export function generateStaticParams() {
   return models.map((m) => ({ model: m.id }));
@@ -66,6 +67,7 @@ async function ModelView({ params }: { params: PageProps<"/architecture/model/[m
             <Link className={s.brand} href="/architecture">
               WKND Bank · Universal Editor on AEM headless
             </Link>
+            <UeLink />
           </span>
           <nav className={s.nav} aria-label="Models">
             <Link className={s.navBtn} href={prev ? modelHref(prev.id) : back} aria-disabled={!prev} tabIndex={prev ? undefined : -1} aria-label={prev ? `Previous model: ${prev.title}` : "Previous model"}>

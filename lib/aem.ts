@@ -4,6 +4,9 @@ import type { Screen } from "./types";
 export const AEM_PROJECT = process.env.NEXT_PUBLIC_AEM_PROJECT || "wknd-bank";
 export const AEM_HOST = process.env.NEXT_PUBLIC_AEM_HOST || "";
 export const AEM_AUTHOR = process.env.NEXT_PUBLIC_AEM_AUTHOR || "";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
+// Universal Editor canvas URL for the deployed site; experience.adobe.com picks the signed-in org.
+export const UE_URL = SITE_URL ? `https://experience.adobe.com/#/aem/editor/canvas/${SITE_URL.replace(/^https?:\/\//, "")}` : "";
 export const HOME_PATH = "/content/dam/wknd-bank/site/en/home/home";
 export const QUERY = "screen-by-path";
 
